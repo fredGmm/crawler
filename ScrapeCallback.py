@@ -5,6 +5,7 @@ import csv
 import lxml.html
 import urllib.request
 import urllib.parse
+import chardet
 
 class ScrapeCallback:
     def __init__(self):
@@ -13,6 +14,7 @@ class ScrapeCallback:
         self.writer.writerow(self.fields)
 
     def tt(self, url, html):
+        # chardet.detect(rawdata)
         tree = lxml.html.fromstring(html)
         row = []
         list = tree.cssselect('div.titlelink.box>a')
