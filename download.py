@@ -12,25 +12,7 @@ max_number = 5
 error_num = 0
 
 
-def download(url, user_agent='fred_spider', proxy=None, retry=3):
-    print('下载如下链接：', url)
-    headers = {'User-agent': user_agent}
-    try:
-        request = urllib.request.Request(url, headers=headers)
 
-        opener = urllib.request.build_opener()
-        if proxy:
-            proxy_params = {urllib.parse.urlparse(url).scheme: proxy}
-            opener.add_handler(urllib.request.ProxyHandler(proxy_params))
-
-        html = opener.open(request).read()
-    except urllib.request.URLError as e:
-        print('下载遇到错误：', e.reason)
-        html = None
-        if retry > 0:
-            if hasattr(e, 'code') and 400 <= e.code <= 600:
-                return download(url, retry - 1)
-    return html
 
 
 # num = 0

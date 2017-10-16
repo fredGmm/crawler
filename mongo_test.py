@@ -2,6 +2,10 @@
 # -*- coding: utf-8 -*-
 
 from pymongo import MongoClient
-conn = MongoClient('localhost', 27017)
-db = conn.testdb
-db.col.insert({"name":'yanying','province':'江苏','age':25})
+conn = MongoClient('127.0.0.1', 27017)
+
+url = 'bbs.hupu.com'
+db = conn.cache
+# db.webpage.insert({'url':'bbs.hupu.com', 'html':'fdsafasdfasf1111111111111'})
+
+db.webpage.update({'_id': url}, {'$set': {'html': '网页内容'}}, upsert=True)
