@@ -1,15 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import urllib.request
-import urllib.parse
-#import itertools
-import re
 
-# 连续最大的错误数
-max_number = 5
-
-error_num = 0
 
 
 
