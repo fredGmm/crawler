@@ -6,6 +6,7 @@ import urllib.parse
 import urllib.robotparser
 from datetime import datetime
 import time
+import lxml.html
 
 
 def download(url, headers=None, proxy=None, retry=3, data=None):
@@ -35,7 +36,7 @@ def download(url, headers=None, proxy=None, retry=3, data=None):
 
 
 # 从页面爬取帖子url
-def find_article_url_in_page(page_url,delay_days=2, max_depth=1, user_agent='fred_spider', proxy=None, headers=None, num_retry=2, resolve_page_class=None):
+def find_article_url_in_page(page_url, delay_days=2, max_depth=1, user_agent='fred_spider', proxy=None, headers=None, num_retry=2, resolve_page_class=None):
     crawl_pages_queue = [page_url]
     seen = {page_url: 0}  # 防止重复
     article_url_num = 0  # 爬到的帖子数
@@ -54,10 +55,19 @@ def find_article_url_in_page(page_url,delay_days=2, max_depth=1, user_agent='fre
         depth = seen[url]
         delay.wait(url)  # 延时
         html = download(url, headers, proxy=proxy, retry=num_retry)
+
         links = []
         if resolve_page_class:
-            links.extend(resolve_page_class(url, html) or [])
+            tree = lxml.html.fromstring(html)
+            list = tree.cssselect('div.titlelink.box>a')
 
+            for k, title in enumerate(list):
+                links.append('https:bbs.hupu.com/' + title.get('href'))
+
+        print(links)
+            #  links.extend(resolve_page_class(url, html) or [])
+
+        exit()
         if depth != max_depth:
             for link in links:
                 link = normalize(page_url, link)
@@ -91,6 +101,7 @@ def same_domain(url1, url2):
     return urllib.parse.urlparse(url1).netloc == urllib.parse.urlparse(url2).netloc
 
 
+
 # 频率限制
 class Delay:
     def __init__(self, delay):
@@ -108,4 +119,4 @@ class Delay:
         return domain
 
 
-#  find_article_url_in_page('https://bbs.hupu.com/lol')
+find_article_url_in_page('https://bbs.hupu.com/lol', resolve_page_class=1)

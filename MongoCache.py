@@ -7,6 +7,7 @@ import pickle
 import zlib
 from bson.binary import Binary
 
+
 class MongoCache:
     def __init__(self, client=None, expires=timedelta(days=30)):
         self.conn = MongoClient('127.0.0.1', 27017)
@@ -42,5 +43,3 @@ class MongoCache:
     def clear(self):
         self.db.webpage.drop()
 
-    if __name__ == '__main__':
-        print(41512)

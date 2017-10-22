@@ -9,10 +9,11 @@ from down_page import download
 # import chardet
 
 class ScrapeCallback:
-    def __init__(self):
+    def __init__(self, html):
         self.writer = csv.writer(open('./test.csv', 'w'))
         self.fields = ('link', 'title')
         self.writer.writerow(self.fields)
+        self.html = html
 
     def __call__(self, page_html, host):
         # chardet.detect(rawdata) 查看编码类型
@@ -30,9 +31,7 @@ class ScrapeCallback:
 
 if __name__ == "__main__":
     html = download('https://bbs.hupu.com/bxj')
-    print(html)
-    exit()
 
-    ScrapeCallback().tt('https://bbs.hupu.com/bxj', html)
+    ScrapeCallback().__call__('https://bbs.hupu.com/bxj', html)
 
 
