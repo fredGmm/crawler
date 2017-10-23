@@ -10,10 +10,10 @@ from bson.binary import Binary
 
 class MongoCache:
     def __init__(self, client=None, expires=timedelta(days=30)):
-        self.conn = MongoClient('127.0.0.1', 27017)
+        self.conn = MongoClient('127.0.0.1', 27017) if client is None else client
 
-        self.db   = self.conn.cache
-        self.db.webpage.create_index('timestanp', expire=expires.total_seconds())
+        self.db = self.conn.cache
+        self.db.webpage.create_index('timestamp', expire=expires.total_seconds())
 
     def __contains__(self, url):
         try:
