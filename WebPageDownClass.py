@@ -57,6 +57,7 @@ class WebPageDown:
                 code = e.code
                 if retry > 0 and 400 <= code <= 600:
                     retry -= 1
+                    time.sleep(3)
                     WebPageDown.down_web_page_html(url, headers, proxy, retry - 1)
             else:
                 code = None

@@ -43,6 +43,10 @@ class MongoCache:
         self.db.webpage.remove(record)
 
 
+    def getCount(self):
+        return self.db.webpage.find().count()
+
+
     def clear(self):
         self.db.webpage.drop()
 

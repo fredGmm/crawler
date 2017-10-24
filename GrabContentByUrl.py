@@ -15,7 +15,7 @@ from SaveInfoClass import SaveInfo
 
 
 # 从页面爬取帖子url
-def find_article_url_in_page(page_url, delay_days=2, max_depth=1, user_agent='fred_spider', proxy=None, headers=None,
+def find_article_url_in_page(page_url, page=1, delay_days=2, max_depth=1, user_agent='fred_spider', proxy=None, headers=None,
                              num_retry=2, save_info_class=1):
     crawl_pages_queue = [page_url]
     seen = {page_url: 0}  # 防止重复
@@ -42,33 +42,36 @@ def find_article_url_in_page(page_url, delay_days=2, max_depth=1, user_agent='fr
             list = tree.cssselect('div.titlelink.box>a')
 
             for k, title in enumerate(list):
+                print('第 %s 页' % page)
+
                 article_url = 'https://bbs.hupu.com' + title.get('href')
                 article_title = title.text_content()
 
-                article_html = WebPageDown.down_web_page_html('https://bbs.hupu.com/20565022.html', headers, proxy=proxy, retry=2)
+                article_html = WebPageDown.down_web_page_html(article_url, headers, proxy=proxy, retry=2)
+                if article_html['code'] != 200:
+                    print('第 %s 页,略过这个帖子 %s ' % (page, article_url))
+                    continue
                 article_tree = lxml.html.fromstring(article_html['html'])
+
                 #  article_content = article_tree.cssselect('div.floor-show>div.floor_box>table.case>tbody>tr>td>div.quote-content')
                 article_content = article_tree.cssselect('div.floor-show>div.floor_box>table>tr>td>div.quote-content')
+                if article_content:
+                    s = SaveInfo(article_title, article_url)
+                    s(content=article_content[0].text_content())
 
-                s = SaveInfo(article_title, article_url)
-                s(content=article_content[0].text_content())
+                    links.append(article_url)
 
-                links.append(article_url)
-
-        print(links)
-        exit()
-
-        if depth != max_depth:
-            for link in links:
-                link = normalize(page_url, link)
-                if link not in seen:
-                    seen[link] = depth + 1
-                    if same_domain(page_url, link):
-                        crawl_pages_queue.append(link)
-
-        num_urls += 1
-        if num_urls == 500:
-            break
+        # if depth != max_depth:
+        #     for link in links:
+        #         link = normalize(page_url, link)
+        #         if link not in seen:
+        #             seen[link] = depth + 1
+        #             if same_domain(page_url, link):
+        #                 crawl_pages_queue.append(link)
+        #
+        # num_urls += 1
+        # if num_urls == 500:
+        #     break
 
 
 def get_robots(url):
@@ -90,8 +93,24 @@ def same_domain(url1, url2):
     """
     return urllib.parse.urlparse(url1).netloc == urllib.parse.urlparse(url2).netloc
 
-# C = MongoCache()
+C = MongoCache()
+print(C.getCount())
+exit()
+# C.clear()
+# C.RemoveOne(url='https:bbs.hupu.com//20188181.html')
+
 # data = C['https://bbs.hupu.com/20188181.html']
 # print(data['article_content'])
 # exit()
-find_article_url_in_page('https://bbs.hupu.com/lol')
+
+
+start = time.clock()
+for page in range(1, 5):
+    url = 'https://bbs.hupu.com/lol'
+    if page > 1:
+        url = url + '-' + str(page)
+    find_article_url_in_page(url)
+end = time.clock()
+print(" run time is : %.03f seconds" % (end-start))
+
+
