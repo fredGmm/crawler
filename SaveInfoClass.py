@@ -12,9 +12,9 @@ class SaveInfo:
         self.url = url
         #  self.content = content
 
-    def __call__(self,url, title, content):
+    def __call__(self, content):
         cache = MongoCache()
-        cache[url] = {'title':title, 'article_content':content}
+        cache[self.url] = {'title': self.title, 'article_content': content}
 
         # chardet.detect(rawdata) 查看编码类型
 

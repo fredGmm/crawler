@@ -9,7 +9,7 @@ import time
 import lxml.html
 
 from WebPageDownClass import WebPageDown
-import MongoCache
+from MongoCache import MongoCache
 from WebPageDownClass import Delay
 from SaveInfoClass import SaveInfo
 
@@ -42,15 +42,20 @@ def find_article_url_in_page(page_url, delay_days=2, max_depth=1, user_agent='fr
             list = tree.cssselect('div.titlelink.box>a')
 
             for k, title in enumerate(list):
-                article_url = 'https:bbs.hupu.com/' + title.get('href')
+                article_url = 'https://bbs.hupu.com' + title.get('href')
                 article_title = title.text_content()
 
-                s = SaveInfo(1,2)
-                s(url=article_url, title=article_title, content='xxxxx')
-                exit()
+                article_html = WebPageDown.down_web_page_html('https://bbs.hupu.com/20565022.html', headers, proxy=proxy, retry=2)
+                article_tree = lxml.html.fromstring(article_html['html'])
+                #  article_content = article_tree.cssselect('div.floor-show>div.floor_box>table.case>tbody>tr>td>div.quote-content')
+                article_content = article_tree.cssselect('div.floor-show>div.floor_box>table>tr>td>div.quote-content')
+
+                s = SaveInfo(article_title, article_url)
+                s(content=article_content[0].text_content())
+
                 links.append(article_url)
 
-        # print(links)
+        print(links)
         exit()
 
         if depth != max_depth:
@@ -85,6 +90,8 @@ def same_domain(url1, url2):
     """
     return urllib.parse.urlparse(url1).netloc == urllib.parse.urlparse(url2).netloc
 
-
-
+# C = MongoCache()
+# data = C['https://bbs.hupu.com/20188181.html']
+# print(data['article_content'])
+# exit()
 find_article_url_in_page('https://bbs.hupu.com/lol')
