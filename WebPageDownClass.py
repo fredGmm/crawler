@@ -31,7 +31,8 @@ class WebPageDown:
             self.delay_days.wait(url)
             proxy = random.choice(self.proxy) if self.proxy else None
             headers = {'User-agent': self.user_agent}
-            result = self.down_web_page_html(url, headers, retry=2, )
+
+            result = WebPageDown.down_web_page_html(url,headers,retry=2)
             if self.cache:
                 self.cache[url] = result
 

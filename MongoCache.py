@@ -11,8 +11,8 @@ from bson.binary import Binary
 class MongoCache:
     def __init__(self, expires=timedelta(days=30)):
 
-        self.conn = MongoClient('127.0.0.1', 27017)
-        self.db = self.conn.hupu
+        self.conn = MongoClient('127.0.0.1', 27017, connect=False)
+        self.db = self.conn.cache
         #self.db.cache.create_index('timestamp', expire=3600)
 
     def __contains__(self, url):
