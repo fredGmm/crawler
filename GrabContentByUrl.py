@@ -15,7 +15,7 @@ from SaveInfoClass import SaveInfo
 
 
 # 从页面爬取帖子url
-def find_article_url_in_page(page_url, page=1, delay_days=2, max_depth=1, user_agent='fred_spider', proxy=None, headers=None,
+def find_article_url_in_page(page_url, page_num=1, delay_days=2, max_depth=1, user_agent='fred_spider', proxy=None, headers=None,
                              num_retry=2, save_info_class=1):
     crawl_pages_queue = [page_url]
     seen = {page_url: 0}  # 防止重复
@@ -42,7 +42,7 @@ def find_article_url_in_page(page_url, page=1, delay_days=2, max_depth=1, user_a
             list = tree.cssselect('div.titlelink.box>a')
 
             for k, title in enumerate(list):
-                print('第 %s 页' % page)
+                print('第 %s 页' % page_num)
 
                 article_url = 'https://bbs.hupu.com' + title.get('href')
                 article_title = title.text_content()
@@ -61,6 +61,7 @@ def find_article_url_in_page(page_url, page=1, delay_days=2, max_depth=1, user_a
 
                     links.append(article_url)
 
+        print('总共下载了%s 帖子' % (len(links)))
         # if depth != max_depth:
         #     for link in links:
         #         link = normalize(page_url, link)
@@ -94,14 +95,14 @@ def same_domain(url1, url2):
     return urllib.parse.urlparse(url1).netloc == urllib.parse.urlparse(url2).netloc
 
 C = MongoCache()
-print(C.getCount())
-exit()
-# C.clear()
+# print(C.getCount())
+# exit()
+C.clear()
 # C.RemoveOne(url='https:bbs.hupu.com//20188181.html')
 
 # data = C['https://bbs.hupu.com/20188181.html']
 # print(data['article_content'])
-# exit()
+exit()
 
 
 start = time.clock()
@@ -109,7 +110,7 @@ for page in range(1, 5):
     url = 'https://bbs.hupu.com/lol'
     if page > 1:
         url = url + '-' + str(page)
-    find_article_url_in_page(url)
+    find_article_url_in_page(url, page_num=page)
 end = time.clock()
 print(" run time is : %.03f seconds" % (end-start))
 
