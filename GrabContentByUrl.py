@@ -58,10 +58,10 @@ def find_article_url_in_page(page_url, page_num=1, delay_days=2, max_depth=1, us
                 if article_content:
                     s = SaveInfo(article_title, article_url)
                     s(content=article_content[0].text_content())
-
+                    article_url_num += 1
                     links.append(article_url)
 
-        print('总共下载了%s 帖子' % (len(links)))
+        print('总共下载了%s 帖子' % article_url_num)
         # if depth != max_depth:
         #     for link in links:
         #         link = normalize(page_url, link)
@@ -95,9 +95,8 @@ def same_domain(url1, url2):
     return urllib.parse.urlparse(url1).netloc == urllib.parse.urlparse(url2).netloc
 
 C = MongoCache()
-# print(C.getCount())
-# exit()
-C.clear()
+print(C.getCount())
+# C.clear()
 # C.RemoveOne(url='https:bbs.hupu.com//20188181.html')
 
 # data = C['https://bbs.hupu.com/20188181.html']

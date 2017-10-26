@@ -9,7 +9,7 @@ class MongoQueue:
 
     def __init__(self, timeout=300):
         self.client = MongoClient('192.168.1.111', 27017, connect=False)
-        self.db = self.client.cache
+        self.db = self.client.queue
         self.timeout = timeout
 
     def __nonzero__(self):
@@ -55,6 +55,10 @@ class MongoQueue:
 
     def clear(self):
         self.db.crawl_queue.drop()
+
+
+    def getCount(self):
+        return self.db.crawl_queue.find().count()
 
 
 # timeout = 1

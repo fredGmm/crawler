@@ -8,6 +8,7 @@ import threading
 import time
 import lxml.html
 import re
+from SaveInfoClass import SaveInfo
 
 
 def multi_crawler(page_url, delay=5, cache=None, callback=None, user_agent='fred_sp', proxy=None, num_retries=1, max_threads=10, timeout=60):
@@ -19,41 +20,43 @@ def multi_crawler(page_url, delay=5, cache=None, callback=None, user_agent='fred
     crawler_queue.push(page_url)
 
     def process_queue():
+        global down_num
         while True:
             try:
                 url = crawler_queue.pop()
             except KeyError:
                 break
             else:
-
                 reg = re.compile(r'.*\d{1,10}\.html.*$') # 判断是 列表页面 还是 帖子文章页面
-                if reg.match(url):
-                    print(123)
-                else: # 列表页
+                if reg.match(url):  # 帖子url
+                    data = cache[url] if cache[url] else None
+                    title = data['title'] if data['title'] else None
+                    article_html = WebPageDown.down_web_page_html(url, {'User-agent': user_agent}, proxy=proxy, retry=1)
+                    if article_html['code'] != 200:
+                        continue
+                    article_tree = lxml.html.fromstring(article_html['html'])
+
+                    article_content = article_tree.cssselect('div.floor-show>div.floor_box>table>tr>td>div.quote-content')
+                    if article_content:
+
+                        s = SaveInfo(title, url, db_name='article')
+                        s(content=article_content[0].text_content())
+                        down_num = down_num + 1
+                        print('下载成功帖子数：%s' % down_num)
+                    crawler_queue.complete(url)
+                else:  # 列表页
                     #  该页面的html
                     page_html = WebPageDown.down_web_page_html(url, {'User-agent': user_agent}, proxy=proxy,retry=num_retries)
                     tree = lxml.html.fromstring(page_html['html'])
                     list = tree.cssselect('div.titlelink.box>a')
+                    print('页面：%s ' % url)
                     for k, title in enumerate(list):
-                        print('页面：%s ' % url)
                         article_url = 'https://bbs.hupu.com' + title.get('href')
                         article_title = title.text_content()
-
                         crawler_queue.push(article_url)
-
                         cache[article_url] = {'article_content': 'xxxx', 'title':article_title}
-                        exit()
+                        crawler_queue.complete(url)
 
-
-                if callback:
-                    try:
-                        links = callback(url, html) or []
-                    except Exception as e:
-                        print('Error in callback for: {}: {}'.format(url, e))
-                    else:
-                        for link in links:
-                            crawler_queue.push(link)
-                crawler_queue.complete(url)
 
     threads = []
     while threads or crawler_queue:
