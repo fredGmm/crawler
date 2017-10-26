@@ -21,39 +21,39 @@ import subprocess
 #     print('2子进程 %s 父进程 %s' % (os.getppid(), pid))
 
 
-# def run_task(name):
-#     print('子进程%s, pid: %s' % (name,os.getpid()))
-#
-#
-# if __name__ == '__main__':
-#     print('父进程 %s' % os.getpid())
-#     p = Process(target=run_task, args=('gmm',))
-#     print("子进程开始")
-#     p.start()
-#     p.join()
-#     print('结束')
-
-def long_task(name):
-    for i in range(2):
-        print('name')
-    # print('run task %s (%s) ...' % (name, os.getpid()))
-    # start = time.time()
-    # time.sleep(random.random() * 3)
-    # end = time.time()
-    # print('Task %s runs %0.2f s ...' % (name, (end - start)))
+def run_task(name):
+    print('子进程%s, pid: %s' % (name,os.getpid()))
 
 
-if __name__ == "__main__":
-    print('cpu数目：%s' % os.cpu_count())
+if __name__ == '__main__':
     print('父进程 %s' % os.getpid())
-    p = Pool(4)
-    for i in range(5):
-        p.apply_async(long_task, args=(i,))
-
-    print('等所有的进程跑完吧')
-    p.close()
+    p = Process(target=run_task, args=('gmm',))
+    print("子进程开始")
+    p.start()
     p.join()
-    print('end')
+    print('结束')
+
+# def long_task(name):
+#     for i in range(2):
+#         print('name')
+#     # print('run task %s (%s) ...' % (name, os.getpid()))
+#     # start = time.time()
+#     # time.sleep(random.random() * 3)
+#     # end = time.time()
+#     # print('Task %s runs %0.2f s ...' % (name, (end - start)))
+#
+#
+# if __name__ == "__main__":
+#     print('cpu数目：%s' % os.cpu_count())
+#     print('父进程 %s' % os.getpid())
+#     p = Pool(4)
+#     for i in range(5):
+#         p.apply_async(long_task, args=(i,))
+#
+#     print('等所有的进程跑完吧')
+#     p.close()
+#     p.join()
+#     print('end')
 
 # print('$ cat cat scraping/mongo_test.py')
 # p = subprocess.Popen(['cat'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)

@@ -47,7 +47,7 @@ def find_article_url_in_page(page_url, page_num=1, delay_days=2, max_depth=1, us
                 article_url = 'https://bbs.hupu.com' + title.get('href')
                 article_title = title.text_content()
 
-                article_html = WebPageDown.down_web_page_html(article_url, headers, proxy=proxy, retry=2)
+                article_html = WebPageDown.down_web_page_html('https://bbs.hupu.com/20188181.html', headers, proxy=proxy, retry=2)
                 if article_html['code'] != 200:
                     print('第 %s 页,略过这个帖子 %s ' % (page, article_url))
                     continue
@@ -55,6 +55,8 @@ def find_article_url_in_page(page_url, page_num=1, delay_days=2, max_depth=1, us
 
                 #  article_content = article_tree.cssselect('div.floor-show>div.floor_box>table.case>tbody>tr>td>div.quote-content')
                 article_content = article_tree.cssselect('div.floor-show>div.floor_box>table>tr>td>div.quote-content')
+                print(article_content)
+                exit()
                 if article_content:
                     s = SaveInfo(article_title, article_url)
                     s(content=article_content[0].text_content())
@@ -101,7 +103,7 @@ print(C.getCount())
 
 # data = C['https://bbs.hupu.com/20188181.html']
 # print(data['article_content'])
-exit()
+# exit()
 
 
 start = time.clock()

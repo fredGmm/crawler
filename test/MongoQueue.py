@@ -31,8 +31,9 @@ class MongoQueue:
             self.db.crawl_queue.update({'_id': record['_id']}, {'$set': {'status': self.PROCESSING, 'timestamp': datetime.now()}}, upsert=True)
             return record['_id']
         else:
-            self.repair()
-            raise KeyError()
+            # self.repair()
+            # raise KeyError()
+            return None
 
     def peek(self):
         record = self.db.crawl_queue.find_one({'status': self.OUTSTANDING})

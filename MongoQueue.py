@@ -8,7 +8,7 @@ class MongoQueue:
     OUTSTANDING, PROCESSING, COMPLETE = range(3)
 
     def __init__(self, timeout=300):
-        self.client = MongoClient('192.168.1.111', 27017, connect=False)
+        self.client = MongoClient('127.0.0.1', 27017, connect=False)
         self.db = self.client.queue
         self.timeout = timeout
 
