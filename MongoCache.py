@@ -11,7 +11,7 @@ from bson.binary import Binary
 class MongoCache:
     def __init__(self, expires=timedelta(days=30), db_name='Cache'):
 
-        self.conn = MongoClient('127.0.0.1', 27017, connect=False)
+        self.conn = MongoClient('192.168.1.111', 27017, connect=False)
         self.db = getattr(self.conn, db_name)
         #self.db.cache.create_index('timestamp', expire=3600)
 

@@ -8,7 +8,7 @@ class MongoQueue:
     OUTSTANDING, PROCESSING, COMPLETE = range(3)
 
     def __init__(self, timeout=300):
-        self.client = MongoClient('127.0.0.1', 27017, connect=False)
+        self.client = MongoClient('192.168.1.111', 27017, connect=False)
         self.db = self.client.queue
         self.timeout = timeout
 
@@ -19,9 +19,9 @@ class MongoQueue:
 
         return True if record else False
 
-    def push(self, url):
+    def push(self, url, title=''):
         try:
-            self.db.crawl_queue.insert({'_id': url, 'status': self.OUTSTANDING})
+            self.db.crawl_queue.insert({'_id': url, 'status': self.OUTSTANDING, 'title': title})
         except errors.DuplicateKeyError as e:
             pass
 
@@ -29,15 +29,18 @@ class MongoQueue:
         record = self.db.crawl_queue.find_one({'status': self.OUTSTANDING})
         if record:
             self.db.crawl_queue.update({'_id': record['_id']}, {'$set': {'status': self.PROCESSING, 'timestamp': datetime.now()}}, upsert=True)
-            return record['_id']
+            return record
         else:
-            self.repair()
-            raise KeyError()
+            return None
+            # self.repair()
+            # raise KeyError()
 
     def peek(self):
         record = self.db.crawl_queue.find_one({'status': self.OUTSTANDING})
         if record:
             return record['_id']
+        else:
+            return None
 
     def complete(self, url):
         self.db.crawl_queue.update({'_id': url}, {'$set': {'status': self.COMPLETE}})

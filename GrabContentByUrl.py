@@ -55,8 +55,7 @@ def find_article_url_in_page(page_url, page_num=1, delay_days=2, max_depth=1, us
 
                 #  article_content = article_tree.cssselect('div.floor-show>div.floor_box>table.case>tbody>tr>td>div.quote-content')
                 article_content = article_tree.cssselect('div.floor-show>div.floor_box>table>tr>td>div.quote-content')
-                print(article_content)
-                exit()
+
                 if article_content:
                     s = SaveInfo(article_title, article_url)
                     s(content=article_content[0].text_content())
@@ -96,7 +95,12 @@ def same_domain(url1, url2):
     """
     return urllib.parse.urlparse(url1).netloc == urllib.parse.urlparse(url2).netloc
 
-C = MongoCache()
+start = time.clock()
+time.sleep(66)
+end = time.clock()
+print(" run time is : %.03f seconds" % (end-start))
+exit()
+C = MongoCache(db_name='serial')
 print(C.getCount())
 # C.clear()
 # C.RemoveOne(url='https:bbs.hupu.com//20188181.html')
