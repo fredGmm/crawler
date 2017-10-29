@@ -9,7 +9,6 @@ driver = webdriver.Chrome('C:\Program Files (x86)\Google\Chrome\Application\chro
 driver.get('http://www.baidu.com/')
 driver.find_element_by_id('kw').send_keys('php')
 
-
 driver.find_element_by_id('su').click()
 driver.implicitly_wait(30)
 
