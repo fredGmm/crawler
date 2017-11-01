@@ -16,7 +16,7 @@ from SaveInfoClass import SaveInfo
 
 # 从页面爬取帖子url
 def find_article_url_in_page(page_url, page_num=1, delay_days=2, max_depth=1, user_agent='fred_spider', proxy=None, headers=None,
-                             num_retry=2, save_info_class=1):
+                             num_retry=2, is_save_cache = None):
     crawl_pages_queue = [page_url]
     seen = {page_url: 0}  # 防止重复
     article_url_num = 0  # 爬到的帖子数
@@ -24,7 +24,6 @@ def find_article_url_in_page(page_url, page_num=1, delay_days=2, max_depth=1, us
 
     # rp = get_robots(page_url)
     # rp.can_fetch(user_agent, page_url) # 检查是否允许爬虫
-
     delay = Delay(delay_days)
     headers = headers or {}
     if user_agent:
@@ -35,32 +34,47 @@ def find_article_url_in_page(page_url, page_num=1, delay_days=2, max_depth=1, us
         depth = seen[url]
         #  delay.wait(url)  # 延时
         html = WebPageDown.down_web_page_html(url, headers, proxy=proxy, retry=num_retry)
-
         links = []
-        if save_info_class:
+        if is_save_cache:
             tree = lxml.html.fromstring(html['html'])
-            list = tree.cssselect('div.titlelink.box>a')
+            list = tree.cssselect('div.titlelink.box>a')  # 每个帖子的url集合
 
             for k, title in enumerate(list):
                 print('第 %s 页' % page_num)
-
-                article_url = 'https://bbs.hupu.com' + title.get('href')
+                article_url = 'https://bbs.hupu.com' + title.get('href')  # 每个帖子的url
                 article_title = title.text_content()
-
-                article_html = WebPageDown.down_web_page_html('https://bbs.hupu.com/20188181.html', headers, proxy=proxy, retry=2)
+                article_html = WebPageDown.down_web_page_html(article_url, headers, proxy=proxy, retry=2)
                 if article_html['code'] != 200:
                     print('第 %s 页,略过这个帖子 %s ' % (page, article_url))
                     continue
                 article_tree = lxml.html.fromstring(article_html['html'])
 
-                #  article_content = article_tree.cssselect('div.floor-show>div.floor_box>table.case>tbody>tr>td>div.quote-content')
+                #  article_content = article_tree.cssselect('div.floor-show>div.floor_box>table.case>tbody>tr>td>div.quote-content')  # 帖子主体
                 article_content = article_tree.cssselect('div.floor-show>div.floor_box>table>tr>td>div.quote-content')
 
                 if article_content:
-                    s = SaveInfo(article_title, article_url)
-                    s(content=article_content[0].text_content())
+                    # 图片采集
+                    image_list = article_tree.cssselect(
+                        'div.floor-show>div.floor_box>table>tr>td>div.quote-content>div.pc-detail-left>div.detail-content>p>img')
+                    image_list = article_tree.cssselect(
+                        'div.floor-show>div.floor_box>table>tr>td>div.quote-content>div>div>img')
+
+                    images = []
+                    for image_num, image in enumerate(image_list):
+                        img_path = image.get('src')
+                        if img_path:
+                            # print('num:%s, img_path:%s' % (image_num, img_path))
+                            images.append(img_path)
+
+                    record = {'article_content': article_content[0].text_content(), 'title': article_title, 'images':images, 'timestamp': datetime.utcnow(), }
+
+                    is_save_cache[article_url] = record
                     article_url_num += 1
                     links.append(article_url)
+
+
+
+
 
         print('总共下载了%s 帖子' % article_url_num)
         # if depth != max_depth:
@@ -95,12 +109,8 @@ def same_domain(url1, url2):
     """
     return urllib.parse.urlparse(url1).netloc == urllib.parse.urlparse(url2).netloc
 
-start = time.clock()
-time.sleep(66)
-end = time.clock()
-print(" run time is : %.03f seconds" % (end-start))
-exit()
-C = MongoCache(db_name='serial')
+
+C = MongoCache()
 print(C.getCount())
 # C.clear()
 # C.RemoveOne(url='https:bbs.hupu.com//20188181.html')
@@ -115,7 +125,7 @@ for page in range(1, 5):
     url = 'https://bbs.hupu.com/lol'
     if page > 1:
         url = url + '-' + str(page)
-    find_article_url_in_page(url, page_num=page)
+    find_article_url_in_page(url, page_num=page,is_save_cache=C)
 end = time.clock()
 print(" run time is : %.03f seconds" % (end-start))
 
