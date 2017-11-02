@@ -12,6 +12,7 @@ from WebPageDownClass import WebPageDown
 from MongoCache import MongoCache
 from WebPageDownClass import Delay
 from SaveInfoClass import SaveInfo
+from GetImageFromHtml import GetImageFromHtml
 
 
 # 从页面爬取帖子url
@@ -54,27 +55,15 @@ def find_article_url_in_page(page_url, page_num=1, delay_days=2, max_depth=1, us
 
                 if article_content:
                     # 图片采集
-                    image_list = article_tree.cssselect(
-                        'div.floor-show>div.floor_box>table>tr>td>div.quote-content>div.pc-detail-left>div.detail-content>p>img')
-                    image_list = article_tree.cssselect(
-                        'div.floor-show>div.floor_box>table>tr>td>div.quote-content>div>div>img')
-
                     images = []
-                    for image_num, image in enumerate(image_list):
-                        img_path = image.get('src')
-                        if img_path:
-                            # print('num:%s, img_path:%s' % (image_num, img_path))
-                            images.append(img_path)
+                    getImage = GetImageFromHtml()
+                    images = getImage.fromHp(article_tree)
 
-                    record = {'article_content': article_content[0].text_content(), 'title': article_title, 'images':images, 'timestamp': datetime.utcnow(), }
+                    record = {'article_content': article_content[0].text_content(), 'title': article_title, 'images':images, 'category':'lol','timestamp': datetime.utcnow(), }
 
                     is_save_cache[article_url] = record
                     article_url_num += 1
                     links.append(article_url)
-
-
-
-
 
         print('总共下载了%s 帖子' % article_url_num)
         # if depth != max_depth:
@@ -110,7 +99,7 @@ def same_domain(url1, url2):
     return urllib.parse.urlparse(url1).netloc == urllib.parse.urlparse(url2).netloc
 
 
-C = MongoCache()
+C = MongoCache(db_name='hupu')
 print(C.getCount())
 # C.clear()
 # C.RemoveOne(url='https:bbs.hupu.com//20188181.html')
@@ -119,9 +108,8 @@ print(C.getCount())
 # print(data['article_content'])
 # exit()
 
-
 start = time.clock()
-for page in range(1, 5):
+for page in range(1, 2):
     url = 'https://bbs.hupu.com/lol'
     if page > 1:
         url = url + '-' + str(page)
