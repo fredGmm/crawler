@@ -7,6 +7,10 @@ import time
 import random
 import urllib.request
 
+import http.cookiejar
+import os
+
+
 
 class WebPageDown:
     def __init__(self, user_agent='fred_spider', proxy=None, delay_days=2, retry=2, cache=None):
@@ -42,7 +46,8 @@ class WebPageDown:
         print('下载如下链接：', url)
         # headers = {'User-agent': user_agent}
         request = urllib.request.Request(url, headers=headers)
-        opener = urllib.request.build_opener()
+        handler = urllib.request.HTTPCookieProcessor()
+        opener = urllib.request.build_opener(handler)
 
         if proxy:
             proxy_params = {urllib.parse.urlparse(url).scheme: proxy}

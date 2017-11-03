@@ -41,13 +41,13 @@ class MongoCache:
 
     def RemoveOne(self, url):
         record = {'_id': url}
-        self.db.webpage.remove(record)
+        self.collection.remove(record)
 
 
     def getCount(self):
-        return self.db.webpage.find().count()
+        return self.collection.find().count()
 
 
     def clear(self):
-        self.db.webpage.drop()
+        self.collection.drop()
 
