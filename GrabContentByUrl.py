@@ -75,7 +75,7 @@ def find_article_url_in_page(page_url, page_num=1, delay_days=2, max_depth=1, us
                     getImage = GetImageFromHtml()
                     images = getImage.fromHp(article_tree)
 
-                    record = {'article_content': article_content[0].text_content(), 'title': article_title, 'images':images, 'category':'lol','timestamp': datetime.utcnow(), }
+                    record = {'article_content': article_content[0].text_content(), 'title': article_title, 'images':images, 'category':'bxj','timestamp': datetime.utcnow(), }
 
                     is_save_cache[article_url] = record
                     article_url_num += 1
@@ -126,7 +126,7 @@ def same_domain(url1, url2):
 
 
 C = MongoCache(db_name='hupu')
-print(C.getCount())
+
 
 # C.clear()
 # C.RemoveOne(url='https:bbs.hupu.com//20188181.html')
@@ -136,8 +136,8 @@ print(C.getCount())
 # exit()
 
 start = time.clock()
-for page in range(11, 20):
-    url = 'https://bbs.hupu.com/lol'
+for page in range(1, 100):
+    url = 'https://bbs.hupu.com/bxj'
     if page > 1:
         url = url + '-' + str(page)
     find_article_url_in_page(url, page_num=page,is_save_cache=C)
