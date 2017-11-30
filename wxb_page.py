@@ -5,6 +5,7 @@ from WebPageDownClass import WebPageDown
 import json
 import urllib.parse
 import pymysql
+import time
 
 conn = pymysql.Connect(host='192.168.1.111', port=3306, user='root', passwd='xiaoming', db='web_arashi', charset='utf8')
 cursor = conn.cursor()
@@ -32,8 +33,10 @@ for page in range(1, 10):
     print('页码' ,page,'数目', len(data['data']))
 
     for row in data['data']:
-        sqlInsert = "insert into wxb_title(title) values('%s')"
-        sql = (sqlInsert % row['title'])
+        timeArray = time.strptime(row['update_time'], "%Y-%m-%d %H:%M:%S")
+
+        sqlInsert = "insert into wxb_title(title,date) values('%s','%s')"
+        sql = (sqlInsert % (row['title'], time.strftime("%Y%m%d", timeArray)))
         cursor.execute(sql)
         conn.commit()
         # print(row['title'])
