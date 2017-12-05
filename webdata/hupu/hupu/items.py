@@ -19,7 +19,7 @@ class HupuItem(scrapy.Item):
     # images = scrapy.Field()
     # comment_num = scrapy.Field()
     # browse_num = scrapy.Field()
-    num = scrapy.Field()
+    # num = scrapy.Field()
 
 
 
