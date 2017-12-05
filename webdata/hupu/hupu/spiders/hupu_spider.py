@@ -35,8 +35,7 @@ class HupuSpider(scrapy.Spider):
                 '//div[@class="show-list"]/ul[@class="for-list"]/li/div[@class="author box"]/a[contains(@style, "color")]/text()').extract()
 
             item['comment_num'] = \
-            sel.xpath('//div[@class="show-list"]/ul[@class="for-list"]/li/span[@class="ansour box"]/text()').re(
-                r'^.*(\d{0,10})')
+            sel.xpath('//div[@class="show-list"]/ul[@class="for-list"]/li/span[@class="ansour box"]/text()').re(r'.*/\s(\d{1,15})')
             yield item
             # num = sel.xpath('span[@class=ansour box]/text()').extract()
 
