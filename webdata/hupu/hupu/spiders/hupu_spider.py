@@ -3,6 +3,7 @@
 import scrapy
 from hupu.items import HupuItem
 
+
 class HupuSpider(scrapy.Spider):
     name = "hupu"
     allowed_domains = ["hupu.com"]
@@ -12,31 +13,28 @@ class HupuSpider(scrapy.Spider):
 
     def parse(self, response):
 
-
         for sel in response.xpath('//div[@class="show-list"]/ul[@class="for-list"]/li'):
             item = HupuItem()
-            item['article_id'] = sel.xpath('.//div[@class="titlelink box"]/a[contains(@href, "html")/@href').re(
-                r'/(d+)\.html')
-            title = sel.xpath('.//div[@class="titlelink box"]/a/text()').extract()
+            # print(sel.xpath('.//div[@class="titlelink box"]/a[contains(@href, "html")/@href').re(r'/(d+)\.html'))
+            item['article_id'] = sel.xpath('.//div[@class="titlelink box"]/a[contains(@href, "html")]/@href').re(r'/(\d+)\.html')
+
             # data.xpath('string(.)') 优化
-            if title:
-                item['title'] = title
-            else:
-                item['title'] = sel.xpath('.//div[@class="titlelink box"]/a/b/text()').extract()
+            item['title'] = sel.xpath('.//div[@class="titlelink box"]/a').xpath('string(.)').extract()
 
-            item['author_name'] = sel.xpath(
-                './/div[@class="show-list"]/ul[@class="for-list"]/li/div[@class="author box"]/a/text()').extract()
+            # if title:
+            #     item['title'] = title
+            # else:
+            #     item['title'] = sel.xpath('.//div[@class="titlelink box"]/a/b/text()').extract()
 
-            item['author_id'] = sel.xpath(
-                '//div[@class="show-list"]/ul[@class="for-list"]/li/div[@class="author box"]/a[contains(@href, "hupu.com")]/@href').re(
-                r'.*/(\d+)$')
+            item['author_name'] = sel.xpath('.//div[@class="author box"]/a/text()').extract()
 
-            item['post_time'] = sel.xpath(
-                '//div[@class="show-list"]/ul[@class="for-list"]/li/div[@class="author box"]/a[contains(@style, "color")]/text()').extract()
+            item['author_id'] = sel.xpath('.//div[@class="author box"]/a[contains(@href, "hupu.com")]/@href').re(r'.*/(\d+)$')
 
-            item['comment_num'] = \
-            sel.xpath('//div[@class="show-list"]/ul[@class="for-list"]/li/span[@class="ansour box"]/text()').re(r'.*/\s(\d{1,15})')
+            item['post_time'] = sel.xpath('.//div[@class="author box"]/a[contains(@style, "color")]/text()').extract()
+
+            comment_num = sel.xpath('.//span[@class="ansour box"]/text()').re(r'^(\d{1,15})\s/\s.*$')
+            browse_num = sel.xpath('.//span[@class="ansour box"]/text()').re(r'^.*\s/\s(\d{1,15})$')
+            item['comment_num'] = comment_num[0] if comment_num else 0
+            item['browse_num'] = browse_num[0] if browse_num else 0
             yield item
             # num = sel.xpath('span[@class=ansour box]/text()').extract()
-
-
