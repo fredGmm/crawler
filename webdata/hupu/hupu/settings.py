@@ -88,3 +88,24 @@ ROBOTSTXT_OBEY = True
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+# ITEM_PIPELINES = {
+#    'hupu.pipelines.HupuPipeline': 300,
+# }
+#
+# MONGODB_HOST = '192.168.1.111'
+# MONGODB_PORT = 27017
+# MONGODB_DBNAME = 'web_data'
+# MONGODB_DOCNAME = 'hupu'
+
+MYSQL_HOSTS = '192.168.1.111'
+MYSQL_USER = 'root'
+MYSQL_PASSWORD = 'xiaoming'
+#MYSQL_PORT = settings.MYSQL_PORT
+MYSQL_DB='web_data'
+CHARSET='utf8'
+
+
+ITEM_PIPELINES = {
+   'hupu.pipelines.HupuPipeline': 300,
+}
