@@ -16,7 +16,7 @@ from GetImageFromHtml import GetImageFromHtml
 
 import os
 import sqlite3
-import requests
+
 from win32.win32crypt import CryptUnprotectData
 import http
 import win32crypt
@@ -36,12 +36,13 @@ def find_article_url_in_page(page_url, page_num=1, delay_days=2, max_depth=1, us
     delay = Delay(delay_days)
     headers = headers or {}
 
-    if page_num > 10:  # hupu 超过十页 开始需要登录啦
+    if page_num > 0:  # hupu 超过十页 开始需要登录啦
         cookie_string = ''
         for i, j in getcookiefromchrome().items():
             cookie_string += i + '=' + j + ';'  # 拼接 cookie
         headers = {'Cookie': cookie_string}
-
+    print(headers)
+    exit(0)
     if user_agent:
         headers['User-agent'] = user_agent
 

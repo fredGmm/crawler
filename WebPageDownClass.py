@@ -10,7 +10,8 @@ import urllib.request
 import http.cookiejar
 import os
 
-
+import socks
+from sockshandler import SocksiPyHandler
 
 class WebPageDown:
     def __init__(self, user_agent='fred_spider', proxy=None, delay_days=2, retry=2, cache=None):
@@ -50,10 +51,14 @@ class WebPageDown:
         opener = urllib.request.build_opener(handler)
 
         if proxy:
-            proxy_params = {urllib.parse.urlparse(url).scheme: proxy}
-            opener.add_handler(urllib.request.ProxyHandler(proxy_params))
+            # proxy_params = {urllib.parse.urlparse(url).scheme: proxy}
+
+            proxy_params = {'https':proxy}
+            # opener.add_handler(urllib.request.ProxyHandler(proxy_params))
+            opener.add_handler(SocksiPyHandler(socks.SOCKS5, "127.0.0.1", 1080))
         try:
             response = opener.open(request)
+
             html = response.read()
             code = response.code
         except urllib.request.URLError as e:
