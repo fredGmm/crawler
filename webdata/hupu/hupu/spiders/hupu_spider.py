@@ -5,6 +5,7 @@ from hupu.items import HupuItem
 from scrapy.shell import inspect_response
 from scrapy.http.request import Request
 from scrapy.utils.project import get_project_settings
+import json
 
 class HupuSpider(scrapy.Spider):
     name = "hupu"
@@ -60,5 +61,39 @@ class HupuSpider(scrapy.Spider):
             browse_num = sel.xpath('.//span[@class="ansour box"]/text()').re(r'^.*\s/\s(\d{1,15})$')
             item['comment_num'] = comment_num[0] if comment_num else 0
             item['browse_num'] = browse_num[0] if browse_num else 0
-            yield item
+            # yield item
+
+        # for sel in response.xpath('//div[@class="show-list"]/ul[@class="for-list"]/li'):
+        #     article_id = sel.xpath('.//div[@class="titlelink box"]/a[contains(@href, "html")]/@href').re(
+        #         r'/(\d+)\.html')
+
+            article_url = 'https://bbs.hupu.com/' + article_id[0] + '.html'
+
+            # article_url = 'https://bbs.hupu.com/21003851.html'
+            yield scrapy.Request(article_url, meta={'item': item}, callback=self.article_parse)
+
+
+    def article_parse(self, response):
+        item = response.meta['item']
+        # inspect_response(response, self)
+        title = response.xpath('//div[@class="bbs-hd-h1"]/h1/text()').extract()
+        item['uid'] = item['author_id']
+        content = response.xpath('//div[@class="floor-show"]/div[@class="floor_box"]/table/tbody/tr/td/div[@class="quote-content"]').xpath('string(.)').extract()
+        item['article_content'] = content[0] if content else 0
+        images = response.xpath('//div[@class="floor-show"]/div[@class="floor_box"]/table/tbody/tr/td/div[@class="quote-content"]').xpath('.//a/@href').extract()
+
+        images2 = response.xpath('//div[@class="floor-show"]/div[@class="floor_box"]/table/tbody/tr/td/div[@class="quote-content"]').xpath('.//img/@src').extract()
+
+        all_img = images + images2
+        item['all_images'] = json.dumps(all_img)
+
+        item['highlights_re'] = 0 # 高亮回复
+        item['article_post_time'] = '2017-12-21 10:51' # 文章详情页里面的 发帖时间
+        yield item
+
+
+
+
+
+
 

@@ -19,5 +19,11 @@ class HupuItem(scrapy.Item):
     comment_num = scrapy.Field()
     browse_num = scrapy.Field()
 
+    article_content = scrapy.Field()
+    all_images = scrapy.Field()
+    article_post_time = scrapy.Field()
+    highlights_re = scrapy.Field()
+    uid = scrapy.Field()
+
 
 
