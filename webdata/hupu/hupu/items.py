@@ -7,7 +7,7 @@
 
 import scrapy
 
-
+# hupu 帖子相关信息
 class HupuItem(scrapy.Item):
     # define the fields for your item here like:
     article_id = scrapy.Field()
@@ -24,6 +24,19 @@ class HupuItem(scrapy.Item):
     article_post_time = scrapy.Field()
     highlights_re = scrapy.Field()
     uid = scrapy.Field()
+
+# 高亮回复 相关信息
+class CommentItem(scrapy.Item):
+    comment_id = scrapy.Field()
+    article_id = scrapy.Field()
+    comment_username = scrapy.Field()
+    comment_create_time = scrapy.Field()
+    comment_uid = scrapy.Field()
+    comment_content = scrapy.Field()
+    highlights_num = scrapy.Field()
+    article_post_time = scrapy.Field()
+
+
 
 
 
