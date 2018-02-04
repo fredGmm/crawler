@@ -14,6 +14,14 @@ from WebPageDownClass import Delay
 from SaveInfoClass import SaveInfo
 from GetImageFromHtml import GetImageFromHtml
 
+import os
+import sqlite3
+
+from win32.win32crypt import CryptUnprotectData
+import http
+import win32crypt
+
+import subprocess
 
 # 从页面爬取帖子url
 def find_article_url_in_page(page_url, page_num=1, delay_days=2, max_depth=1, user_agent='fred_spider', proxy=None, headers=None,
@@ -27,6 +35,14 @@ def find_article_url_in_page(page_url, page_num=1, delay_days=2, max_depth=1, us
     # rp.can_fetch(user_agent, page_url) # 检查是否允许爬虫
     delay = Delay(delay_days)
     headers = headers or {}
+
+    if page_num > 0:  # hupu 超过十页 开始需要登录啦
+        cookie_string = ''
+        for i, j in getcookiefromchrome().items():
+            cookie_string += i + '=' + j + ';'  # 拼接 cookie
+        headers = {'Cookie': cookie_string}
+    print(headers)
+    exit(0)
     if user_agent:
         headers['User-agent'] = user_agent
 
@@ -34,7 +50,8 @@ def find_article_url_in_page(page_url, page_num=1, delay_days=2, max_depth=1, us
         url = crawl_pages_queue.pop()
         depth = seen[url]
         #  delay.wait(url)  # 延时
-        html = WebPageDown.down_web_page_html(url, headers, proxy=proxy, retry=num_retry)
+        html = WebPageDown.down_web_page_html(url, headers, proxy=proxy, retry=num_retry,)
+
         links = []
         if is_save_cache:
             tree = lxml.html.fromstring(html['html'])
@@ -59,7 +76,7 @@ def find_article_url_in_page(page_url, page_num=1, delay_days=2, max_depth=1, us
                     getImage = GetImageFromHtml()
                     images = getImage.fromHp(article_tree)
 
-                    record = {'article_content': article_content[0].text_content(), 'title': article_title, 'images':images, 'category':'lol','timestamp': datetime.utcnow(), }
+                    record = {'article_content': article_content[0].text_content(), 'title': article_title, 'images':images, 'category':'bxj','timestamp': datetime.utcnow(), }
 
                     is_save_cache[article_url] = record
                     article_url_num += 1
@@ -78,6 +95,16 @@ def find_article_url_in_page(page_url, page_num=1, delay_days=2, max_depth=1, us
         # if num_urls == 500:
         #     break
 
+
+def getcookiefromchrome(host='.hupu.com'):
+    cookiepath = os.environ['LOCALAPPDATA'] + r"\Google\Chrome\User Data\Default\Cookies"
+    sql = "select host_key,name,encrypted_value from cookies where host_key='%s'" % host
+    with sqlite3.connect(cookiepath) as conn:
+        cu = conn.cursor()
+        cookies = {name: CryptUnprotectData(encrypted_value)[1].decode() for host_key, name, encrypted_value in
+                   cu.execute(sql).fetchall()}
+
+        return cookies
 
 def get_robots(url):
     """Initialize robots parser for this domain
@@ -100,7 +127,8 @@ def same_domain(url1, url2):
 
 
 C = MongoCache(db_name='hupu')
-print(C.getCount())
+
+
 # C.clear()
 # C.RemoveOne(url='https:bbs.hupu.com//20188181.html')
 
@@ -109,8 +137,8 @@ print(C.getCount())
 # exit()
 
 start = time.clock()
-for page in range(1, 2):
-    url = 'https://bbs.hupu.com/lol'
+for page in range(1, 100):
+    url = 'https://bbs.hupu.com/bxj'
     if page > 1:
         url = url + '-' + str(page)
     find_article_url_in_page(url, page_num=page,is_save_cache=C)

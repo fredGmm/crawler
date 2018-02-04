@@ -5,12 +5,14 @@ import urllib.request
 import sys
 
 
-def PrintMessage(msg):
+def print_message(msg):
+    """打印信息"""
     print('>>', sys.stderr, '\r',)
     print('>>', sys.stderr, msg,)
 
 
-def DownloadFile(url, tofile, CallBackFunction=PrintMessage):
+def download_file(url, tofile, CallBackFunction=print_message):
+    """下载文件，（大文件）"""
     f = urllib.request.urlopen(url)
     outf = open(tofile, 'wb')
     c = 0
@@ -23,6 +25,7 @@ def DownloadFile(url, tofile, CallBackFunction=PrintMessage):
         c += len(s)
         CallBackFunction('Download %d' % (c/(1024*1024)))
     return c
+
 
 url = 'https://v8.wuso.tv/wp-content/uploads/2017/03/iii817.mp4'
 DownloadFile(url, 'xiaochuan.mp4', )
