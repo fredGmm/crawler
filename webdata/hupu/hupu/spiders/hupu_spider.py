@@ -7,7 +7,7 @@ from scrapy.shell import inspect_response
 from scrapy.http.request import Request
 from scrapy.utils.project import get_project_settings
 import json
-
+import re
 class HupuSpider(scrapy.Spider):
     name = "hupu"
     allowed_domains = ["hupu.com"]
@@ -16,11 +16,18 @@ class HupuSpider(scrapy.Spider):
     cookie_dict = dict((line.split('=') for line in cookie_str.strip().split(";")))
 
     urls = []
-    for page in range(1, 100):
-        url = 'https://bbs.hupu.com/bxj'
+    for page in range(1, 6):
+        url = 'https://bbs.hupu.com/bxj-1'
         if page > 1:
             url = url + '-' + str(page)
         urls.append(url)
+
+    for page in range(1, 6):
+        url = 'https://bbs.hupu.com/lol-1'
+        if page > 1:
+            url = url + '-' + str(page)
+        urls.append(url)
+
     start_urls = urls
     # start_urls = [
     #     'https://bbs.hupu.com/bxj-99'
@@ -32,9 +39,15 @@ class HupuSpider(scrapy.Spider):
 
     def parse(self, response):
         # inspect_response(response, self)
+        response_url = response.url
+
+        # 匹配它是属于 bxj（步行街） 还是 vote（湿乎乎） 还是 lol（英雄联盟）
+        re_res = re.findall(r'bbs.hupu.com/(\w+){0,4}-?\d*', response_url)
+        article_plate = re_res[0] if len(re_res) > 0 else 'bxj'
 
         for sel in response.xpath('//div[@class="show-list"]/ul[@class="for-list"]/li'):
             item = HupuItem()
+            item['article_plate'] = article_plate
             # print(sel.xpath('.//div[@class="titlelink box"]/a[contains(@href, "html")/@href').re(r'/(d+)\.html'))
             article_id = sel.xpath('.//div[@class="titlelink box"]/a[contains(@href, "html")]/@href').re(r'/(\d+)\.html')
 

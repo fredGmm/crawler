@@ -11,7 +11,7 @@ import scrapy
 class HupuItem(scrapy.Item):
     # define the fields for your item here like:
     article_id = scrapy.Field()
-
+    article_plate = scrapy.Field()
     title = scrapy.Field()
     author_name = scrapy.Field()
     author_id = scrapy.Field()
