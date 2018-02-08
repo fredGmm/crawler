@@ -36,6 +36,22 @@ class CommentItem(scrapy.Item):
     highlights_num = scrapy.Field()
     article_post_time = scrapy.Field()
 
+# 用户相关信息
+class UserItem(scrapy.Item):
+    user_id = scrapy.Field()
+    gender = scrapy.Field()
+    bbs_reputation = scrapy.Field()
+    bbs_level = scrapy.Field()
+    associations = scrapy.Field()
+    hupu_property = scrapy.Field()
+    online_time = scrapy.Field()
+    reg_time = scrapy.Field()
+    last_login = scrapy.Field()
+    self_introduction = scrapy.Field()
+    favorite_sport = scrapy.Field()
+    favorite_league = scrapy.Field()
+    favorite_team = scrapy.Field()
+
 
 
 

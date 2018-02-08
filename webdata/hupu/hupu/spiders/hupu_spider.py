@@ -3,11 +3,15 @@
 import scrapy
 from hupu.items import HupuItem
 from hupu.items import CommentItem
+from hupu.items import UserItem
 from scrapy.shell import inspect_response
 from scrapy.http.request import Request
 from scrapy.utils.project import get_project_settings
 import json
 import re
+import logging
+
+
 class HupuSpider(scrapy.Spider):
     name = "hupu"
     allowed_domains = ["hupu.com"]
@@ -16,13 +20,13 @@ class HupuSpider(scrapy.Spider):
     cookie_dict = dict((line.split('=') for line in cookie_str.strip().split(";")))
 
     urls = []
-    for page in range(1, 6):
+    for page in range(1, 8):
         url = 'https://bbs.hupu.com/bxj-1'
         if page > 1:
             url = url + '-' + str(page)
         urls.append(url)
 
-    for page in range(1, 6):
+    for page in range(1, 8):
         url = 'https://bbs.hupu.com/lol-1'
         if page > 1:
             url = url + '-' + str(page)
@@ -83,8 +87,8 @@ class HupuSpider(scrapy.Spider):
 
             article_url = 'https://bbs.hupu.com/' + article_id[0] + '.html'
 
-            # article_url = 'https://bbs.hupu.com/21016783.html'
-            yield scrapy.Request(article_url, meta={'item': item}, callback=self.article_parse)
+            # article_url = 'https://bbs.hupu.com/21393360.html'
+            yield scrapy.Request(article_url, meta={'item': item}, callback=self.article_parse,cookies=self.cookie_dict)
 
     # 抓取 帖子下面的亮贴，神回复怎能错过-。-
     def article_parse(self, response):
@@ -118,19 +122,84 @@ class HupuSpider(scrapy.Spider):
                     '//div[@id=$val]/div[@class="floor_box"]/div[@class="author"]/div[@class="left"]/span/@uid', val=comment_id).extract_first()
 
                 comment_item['comment_content'] = response.xpath('//div[@id=$val]/div[@class="floor_box"]/table/tbody/tr/td/text()', val=comment_id).extract_first()
+
                 if len(comment_item['comment_content']) < 3:
                     comment_item['comment_content'] = response.xpath('//div[@id=$val]/div[@class="floor_box"]/table/tbody/tr/td', val=comment_id).xpath('string(.)').extract_first()
-
+                    logging.log(logging.INFO, '用户评论 :' + comment_item['comment_content'])
                 comment_item['highlights_num'] = response.xpath('//div[@id=$val]/div[@class="floor_box"]/div[@class="author"]/div[@class="left"]/span/span//span/text()',val=comment_id).extract_first()
                 yield comment_item
         item['highlights_re'] = ','.join(highlights_re)
         artcile_post_time = response.xpath('//div[@class="floor-show"]/div[@class="floor_box"]/div[@class="author"]//div[@class="left"]/span[@class="stime"]/text()').extract()
         item['article_post_time'] = artcile_post_time[0] if artcile_post_time else ''  # 文章详情页里面的 发帖时间
         yield item
+        user_info_url = 'https://my.hupu.com/' + item['author_id'] + '/profile'
+        # user_info_url = 'https://my.hupu.com/' + '257808172702959' + '/profile'
+        yield scrapy.Request(user_info_url, meta={'item': item}, callback=self.user_parse,cookies=self.cookie_dict)
 
+    # 抓取用户信息
+    def user_parse(self, response):
+        # inspect_response(response, self)
+        user_item = UserItem()  # 用户信息
 
+        common_path = response.xpath('//div[@id="content"]/table[@class="profile_table"][1]')
+        # profile = response.xpath('//div[@id="content"]/table[@class="profile_table"]/tr/td/text()').extract()
+        item = response.meta['item']
+        # 记录日志
+        logging.log(logging.INFO, '用户id :' + item['author_id'])
 
+        user_item['user_id'] = item['author_id']
+        # user_item['gender'] = profile[1] if len(profile[1]) > 0 else '保密'
+        gender_res = common_path.xpath('.//tr[1]/td/text()').extract()
+        gender_val = gender_res[1] if len(gender_res) > 1 else '保密'
+        user_item['gender'] = self.getGender(gender_val)
 
+        user_item['bbs_reputation'] = 0
 
+        bbs_level_res = common_path.xpath('.//tr[2]/td/text()').extract()
+        user_item['bbs_level'] = bbs_level_res[1] if len(bbs_level_res) > 1 else 0
 
+        # 所属社团
+        associations_res = common_path.xpath('.//tr[3]/td/text()').extract()
+        user_item['associations'] = associations_res[1] if len(associations_res) > 1 else 0
 
+        # 社区资产
+        hupu_property_res = common_path.xpath('.//tr[4]/td/text()').extract()
+        hupu_property_data =  hupu_property_res[1] if len(hupu_property_res) > 1 else 0
+        property = re.findall(r'^(\d+).*$', hupu_property_data)
+        user_item['hupu_property'] = property[0] if len(property) > 0 else 0
+
+        # 在线时间
+        online_time_res = common_path.xpath('.//tr[5]/td/text()').extract()
+        online_time_data = online_time_res[1] if len(online_time_res) > 1 else 0
+        online_time = re.findall(r'^(\d+).*$', online_time_data)
+        user_item['online_time'] = online_time[0] if len(online_time) > 0 else 0
+
+        reg_time_res = common_path.xpath('.//tr[6]/td/text()').extract()
+        user_item['reg_time'] = reg_time_res[1] if len(reg_time_res) > 1 else 0
+
+        last_login_res =  common_path.xpath('.//tr[7]/td/text()').extract()
+        user_item['last_login'] = last_login_res[1] if len(last_login_res) > 1 else 0
+
+        self_introduction_res = common_path.xpath('.//tr[8]/td/text()').extract()
+        user_item['self_introduction'] = self_introduction_res[1] if len(self_introduction_res) > 1 else ''
+
+        # 喜欢的事情
+        common_path_favorite = response.xpath('//div[@id="content"]/table[@class="profile_table"][2]')
+        favorite_sport_res = common_path_favorite.xpath('.//tr[1]/td/text()').extract()
+        user_item['favorite_sport'] = favorite_sport_res[1] if len(favorite_sport_res) > 1 else ''
+        # 最喜欢的联赛
+        favorite_league_res = common_path_favorite.xpath('.//tr[2]/td/text()').extract()
+        user_item['favorite_league'] = favorite_league_res[1] if len(favorite_league_res) > 1 else ''
+
+        favorite_team_res = common_path_favorite.xpath('.//tr[3]/td/text()').extract()
+        user_item['favorite_team'] = favorite_team_res[1] if len(favorite_team_res) > 1 else ''
+
+        yield user_item
+
+    def getGender(self, gender_val):
+        if gender_val == '男':
+            return 2
+        elif gender_val == '女':
+            return 1
+        else:
+            return 0

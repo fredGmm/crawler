@@ -9,6 +9,7 @@ from scrapy.conf import settings
 import pymysql
 from hupu.items import HupuItem
 from hupu.items import CommentItem
+from hupu.items import UserItem
 import time
 import pymongo
 
@@ -122,10 +123,29 @@ class HupuPipeline(object):
                 conn.rollback()
             else:
                 conn.commit()
+        elif isinstance(item, UserItem):
+            user_info_insert_sql = ("insert into hupu_user_info (user_id,gender,bbs_reputation,bbs_level,associations,hupu_property,online_time,reg_time,last_login,self_introduction,favorite_sport,favorite_league,favorite_team) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)")
+            user_info_is_exist_sql = ("select 1 from hupu_user_info where user_id = %s")
+
+            user_insert_param = [item['user_id'],item['gender'],item['bbs_reputation'],item['bbs_level'],item['associations'],
+                                 item['hupu_property'],item['online_time'],item['reg_time'],item['last_login'],item['self_introduction'],
+                                 item['favorite_sport'],item['favorite_league'],item['favorite_team']]
+            user_select_param = [item['user_id']]
+            # user_info 处理
+            try:
+                select_ret = cur.execute(user_info_is_exist_sql, user_select_param)
+                if not select_ret:
+                    cur.execute(user_info_insert_sql, user_insert_param)
+            except ValueError as e:
+                print('mysql insert fail', e)
+                conn.rollback()
+            else:
+                conn.commit()
 
         conn.close()
         cur.close()
         return item
+
         # class CommentPipeline(object):
         #     def process_item(self, item, spider):
         #         host = settings['MYSQL_HOSTS']

@@ -103,7 +103,7 @@ MYSQL_USER = 'root'
 MYSQL_PASSWORD = 'xiaoming'
 #MYSQL_PORT = settings.MYSQL_PORT
 MYSQL_DB='web_data'
-CHARSET='utf8'
+CHARSET='utf8mb4'
 
 
 ITEM_PIPELINES = {
@@ -114,3 +114,11 @@ DEFAULT_REQUEST_HEADERS = {
    'accept-language' : 'zh-CN,zh;q=0.9',
    'user-agent' : '432rewqr342141',
 }
+
+LOG_FILE = "scrapy_hupu.log"
+LOG_LEVEL = 'INFO'
+# LOG_ENABLED 默认: True，启用logging
+# LOG_ENCODING 默认: 'utf-8'，logging使用的编码
+# LOG_FILE 默认: None，在当前目录里创建logging输出文件的文件名
+# LOG_LEVEL 默认: 'DEBUG'，log的最低级别
+# LOG_STDOUT 默认: False 如果为 True，进程所有的标准输出(及错误)将会被重定向到log中。例如，执行 print "hello" ，其将会在Scrapy log中显示
