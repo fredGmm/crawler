@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-values = abs(-100000000000000000)
+for page in range(1, 1):
+   print(page)
 
+exit(0)
+values = abs(-100000000000000000)
 
 # print(values)
 
