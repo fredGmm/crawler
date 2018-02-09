@@ -151,7 +151,7 @@ class HupuSpider(scrapy.Spider):
         # user_item['gender'] = profile[1] if len(profile[1]) > 0 else '保密'
         gender_res = common_path.xpath('.//tr[1]/td/text()').extract()
         gender_val = gender_res[1] if len(gender_res) > 1 else '保密'
-        user_item['gender'] = self.getGender(gender_val)
+        user_item['gender'] = self.get_gender(gender_val)
 
         user_item['bbs_reputation'] = 0
 
@@ -194,9 +194,55 @@ class HupuSpider(scrapy.Spider):
         favorite_team_res = common_path_favorite.xpath('.//tr[3]/td/text()').extract()
         user_item['favorite_team'] = favorite_team_res[1] if len(favorite_team_res) > 1 else ''
 
+       # yield user_item
+        user_info_other_url = 'https://my.hupu.com/' + item['author_id']
+        user_info_other_url = 'https://my.hupu.com/' + '189695810822085'
+        yield scrapy.Request(user_info_other_url, meta={'user_item': user_item}, callback=self.user_other_parse, cookies=self.cookie_dict)
+
+    # 粉丝，关注人数，社区声望-，访问人数
+    def user_other_parse(self, response):
+        inspect_response(response, self)
+        user_item = response.meta['user_item']
+
+        # 访问数
+        user_visit_data = response.xpath('//div[@class="personal_right"]/h3[@class="mpersonal"]/span[@class="f666"]/text()').extract()
+        user_visit_num = re.findall(r'^.(\d+).*$', user_visit_data[0]) if len(user_visit_data) > 0 else 0
+        user_item['visit_num'] = user_visit_num
+
+        # 粉丝数
+        follower_data = response.xpath('//div[@id="following"]/p[@class="more"]/a[contains(@href, "follower")]/text()').extract()
+        follower_num = re.findall(r'^(\d+).*$', follower_data[0]) if len(follower_data) > 0 else 0
+        user_item['follower_num'] = follower_num
+
+        # 关注人数
+        followering_data = response.xpath('//div[@id="following"]/p[@class="more"]/a[contains(@href, "following")]/text()').extract()
+        followering_num = re.findall(r'^.(\d+).*$', followering_data[0]) if len(followering_data[0]) > 0 else 0
+        user_item['followering_num'] = followering_num
+
+        user_info_topic_url = 'https://my.hupu.com/' + user_item['user_id']
+        # user_info_topic_url = 'https://my.hupu.com/' + '210000370364932' + '/topic'
+        yield scrapy.Request(user_info_topic_url, meta={'user_item': user_item}, callback=self.user_topic_parse,
+                             cookies=self.cookie_dict)
+
+    # 回帖数，收藏数，主题帖数，
+    def user_topic_parse(self, response):
+        inspect_response(response, self)
+        user_item = response.meta['user_item']
+        data = response.xpath('//div[@class="tabs_header"]/form/ul/li/a[contains(@href, "topic")]/span').xpath("string(.)").extract()
+        topic_data_str = ','.join(data)
+        topic_data = re.findall(r'^.*主题 \((\d+)\)', topic_data_str)
+        user_item['topic_num'] = topic_data[0] if len(topic_data) > 0 else 0
+
+        re_data = re.findall(r'^.*回帖 \((\d+)\)', topic_data_str)
+        user_item['re_topic_num'] = re_data[0] if len(re_data) > 0 else 0
+
+        collect_data = re.findall(r'^.*收藏 \((\d+)\)$', topic_data_str)
+        user_item['collect_num'] = collect_data[0] if len(collect_data) > 0 else 0
+
         yield user_item
 
-    def getGender(self, gender_val):
+    @classmethod
+    def get_gender(cls, gender_val):
         if gender_val == '男':
             return 2
         elif gender_val == '女':

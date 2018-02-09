@@ -124,7 +124,7 @@ class HupuPipeline(object):
             else:
                 conn.commit()
         elif isinstance(item, UserItem):
-            user_info_insert_sql = ("insert into hupu_user_info (user_id,gender,bbs_reputation,bbs_level,associations,hupu_property,online_time,reg_time,last_login,self_introduction,favorite_sport,favorite_league,favorite_team) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)")
+            user_info_insert_sql = ("insert into hupu_user_info (user_id,gender,bbs_reputation,bbs_level,associations,hupu_property,online_time,reg_time,last_login,self_introduction,favorite_sport,favorite_league,favorite_team,vistit_num,follower_num,following_num,topic_num,re_topic_num,collect_num) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s.%s,%s,%s,%s)")
             user_info_is_exist_sql = ("select 1 from hupu_user_info where user_id = %s")
 
             user_insert_param = [item['user_id'],item['gender'],item['bbs_reputation'],item['bbs_level'],item['associations'],

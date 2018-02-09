@@ -52,6 +52,16 @@ class UserItem(scrapy.Item):
     favorite_league = scrapy.Field()
     favorite_team = scrapy.Field()
 
+    # 后期补充的属性
+    visit_num = scrapy.Field()
+    follower_num = scrapy.Field()
+    followering_num = scrapy.Field()
+    topic_num = scrapy.Field()
+    re_topic_num = scrapy.Field()
+    collect_num = scrapy.Field()
+
+
+
 
 
 
