@@ -138,66 +138,88 @@ class HupuSpider(scrapy.Spider):
 
     # 抓取用户信息
     def user_parse(self, response):
-        inspect_response(response, self)
+        # inspect_response(response, self)
         user_item = UserItem()  # 用户信息
-
-        # for sel in response.xpath('//div[@id="content"]/table[@class="profile_table"][1]/tr'):
-        #     td_data = sel.xpath('.//td/text()').extract()
-
-        common_path = response.xpath('//div[@id="content"]/table[@class="profile_table"][1]')
-
-        # 档案中 ，有些包含地区有些没有，造成资料行数不一致
-        tr_count = len(response.xpath('//div[@id="content"]/table[@class="profile_table"][1]/tr').extract())
-        is_offset = 1 if tr_count > 8 else 0
-
-        # profile = response.xpath('//div[@id="content"]/table[@class="profile_table"]/tr/td/text()').extract()
         item = response.meta['item']
         # 记录日志
         logging.log(logging.INFO, '用户id :' + item['author_id'])
-
         user_item['user_id'] = item['author_id']
-        # user_item['gender'] = profile[1] if len(profile[1]) > 0 else '保密'
-        gender_res = common_path.xpath('.//tr[1]/td/text()').extract()
-        gender_val = gender_res[1] if len(gender_res) > 1 else '保密'
-        user_item['gender'] = self.get_gender(gender_val)
 
-        user_item['bbs_reputation'] = 0
+        for sel in response.xpath('//div[@id="content"]/table[@class="profile_table"][1]/tr'):
+
+            td_data = sel.xpath('.//td/text()').extract()
+
+            if '性别' in td_data[0] :
+                user_item['gender'] = self.get_gender(td_data[1]) if len(td_data) > 1 else 0
+            if '等级' in td_data[0] :
+                user_item['bbs_level'] = td_data[1] if len(td_data) > 1 else 0
+            if '社团' in td_data[0] :
+                user_item['associations'] = td_data[1] if len(td_data) > 1 else 0
+            if '现金' in td_data[0]:
+                hupu_property_data = td_data[1] if len(td_data) > 1 else 0
+                property = re.findall(r'^(\d+).*$', hupu_property_data)
+                user_item['hupu_property'] = property[0] if len(property) > 0 else 0
+            if '在线' in td_data[0]:
+                online_time_data = td_data[1] if len(td_data) > 1 else 0
+                online_time = re.findall(r'^(\d+).*$', online_time_data)
+                user_item['online_time'] = online_time[0] if len(online_time) > 0 else 0
+            if '注册' in td_data[0]:
+                user_item['reg_time'] = td_data[1] if len(td_data) > 1 else 0
+            if '最后' in td_data[0]:
+                user_item['last_login'] = td_data[1] if len(td_data) > 1 else 0
+            if '自我' in td_data[0]:
+                user_item['self_introduction'] = td_data[1] if len(td_data) > 1 else ''
+
+        # common_path = response.xpath('//div[@id="content"]/table[@class="profile_table"][1]')
+
+        # 档案中 ，有些包含地区有些没有，造成资料行数不一致
+        # tr_count = len(response.xpath('//div[@id="content"]/table[@class="profile_table"][1]/tr').extract())
+        # is_offset = 1 if tr_count > 8 else 0
+
+        # profile = response.xpath('//div[@id="content"]/table[@class="profile_table"]/tr/td/text()').extract()
+
+        # user_item['gender'] = profile[1] if len(profile[1]) > 0 else '保密'
+        # gender_res = common_path.xpath('.//tr[1]/td/text()').extract()
+        # gender_val = gender_res[1] if len(gender_res) > 1 else '保密'
+        # user_item['gender'] = self.get_gender(gender_val)
+
+        # user_item['bbs_reputation'] = 0
 
         # 社区等级
-        level_tr = 3 if is_offset else 2
-        bbs_level_res = common_path.xpath('.//tr[$val]/td/text()', val=level_tr).extract()
-        user_item['bbs_level'] = bbs_level_res[1] if len(bbs_level_res) > 1 else 0
+        # level_tr = 3 if is_offset else 2
+        # bbs_level_res = common_path.xpath('.//tr[$val]/td/text()', val=level_tr).extract()
+        # user_item['bbs_level'] = bbs_level_res[1] if len(bbs_level_res) > 1 else 0
 
         # 所属社团
-        associations_tr = 4 if is_offset else 3
-        associations_res = common_path.xpath('.//tr[$val]/td/text()', val=associations_tr).extract()
-        user_item['associations'] = associations_res[1] if len(associations_res) > 1 else 0
+        # associations_tr = 4 if is_offset else 3
+        # associations_res = common_path.xpath('.//tr[$val]/td/text()', val=associations_tr).extract()
+        # user_item['associations'] = associations_res[1] if len(associations_res) > 1 else 0
 
         # 社区资产
-        property_tr = 5 if is_offset else 4
-        hupu_property_res = common_path.xpath('.//tr[$val]/td/text()', val=property_tr).extract()
-        hupu_property_data =  hupu_property_res[1] if len(hupu_property_res) > 1 else 0
-        property = re.findall(r'^(\d+).*$', hupu_property_data)
-        user_item['hupu_property'] = property[0] if len(property) > 0 else 0
+        # property_tr = 5 if is_offset else 4
+        # hupu_property_res = common_path.xpath('.//tr[$val]/td/text()', val=property_tr).extract()
+        # hupu_property_data =  hupu_property_res[1] if len(hupu_property_res) > 1 else 0
+        # property = re.findall(r'^(\d+).*$', hupu_property_data)
+        # user_item['hupu_property'] = property[0] if len(property) > 0 else 0
 
         # 在线时间
-        online_time_tr = 6 if is_offset else 5
-        online_time_res = common_path.xpath('.//tr[$val]/td/text()', val=online_time_tr).extract()
-        online_time_data = online_time_res[1] if len(online_time_res) > 1 else 0
-        online_time = re.findall(r'^(\d+).*$', online_time_data)
-        user_item['online_time'] = online_time[0] if len(online_time) > 0 else 0
+        # online_time_tr = 6 if is_offset else 5
+        # online_time_res = common_path.xpath('.//tr[$val]/td/text()', val=online_time_tr).extract()
+        # online_time_data = online_time_res[1] if len(online_time_res) > 1 else 0
+        # online_time = re.findall(r'^(\d+).*$', online_time_data)
+        # user_item['online_time'] = online_time[0] if len(online_time) > 0 else 0
 
-        reg_time_tr = 7 if is_offset else 6
-        reg_time_res = common_path.xpath('.//tr[$val]/td/text()', val=reg_time_tr).extract()
-        user_item['reg_time'] = reg_time_res[1] if len(reg_time_res) > 1 else 0
-
-        last_login_tr = 8 if is_offset else 7
-        last_login_res =  common_path.xpath('.//tr[$val]/td/text()', val=last_login_tr).extract()
-        user_item['last_login'] = last_login_res[1] if len(last_login_res) > 1 else 0
-
-        introduction_tr = 9 if is_offset else 8
-        self_introduction_res = common_path.xpath('.//tr[$val]/td/text()', val=introduction_tr).extract()
-        user_item['self_introduction'] = self_introduction_res[1] if len(self_introduction_res) > 1 else ''
+        # reg_time_tr = 7 if is_offset else 6
+        # reg_time_res = common_path.xpath('.//tr[$val]/td/text()', val=reg_time_tr).extract()
+        # user_item['reg_time'] = reg_time_res[1] if len(reg_time_res) > 1 else 0
+        #
+        # last_login_tr = 8 if is_offset else 7
+        # last_login_res =  common_path.xpath('.//tr[$val]/td/text()', val=last_login_tr).extract()
+        # user_item['last_login'] = last_login_res[1] if len(last_login_res) > 1 else 0
+        #
+        # introduction_tr = 9 if is_offset else 8
+        # self_introduction_res = common_path.xpath('.//tr[$val]/td/text()', val=introduction_tr).extract()
+        # user_item['self_introduction'] = self_introduction_res[1] if len(self_introduction_res) > 1 else ''
 
         # 喜欢的事情
         common_path_favorite = response.xpath('//div[@id="content"]/table[@class="profile_table"][2]')
@@ -212,7 +234,7 @@ class HupuSpider(scrapy.Spider):
 
        # yield user_item
         user_info_other_url = 'https://my.hupu.com/' + item['author_id']
-        # user_info_other_url = 'https://my.hupu.com/' + '52011257892977'  # 4822766296690 52011257892977 189695810822085
+        # user_info_other_url = 'https://my.hupu.com/' + '268318221130217'  # 4822766296690 52011257892977 189695810822085
         yield scrapy.Request(user_info_other_url, meta={'user_item': user_item}, callback=self.user_other_parse, cookies=self.cookie_dict)
 
     # 粉丝，关注人数，社区声望-，访问人数
@@ -233,8 +255,14 @@ class HupuSpider(scrapy.Spider):
 
         # 关注人数
         followering_data = response.xpath('//div[@id="following"]/p[@class="more"]/a[contains(@href, "following")]/text()').extract()
-        followering_num = re.findall(r'^.(\d+).*$', followering_data[0]) if len(followering_data) > 0 else []
+        followering_num = re.findall(r'.(\d+).*$', followering_data[0]) if len(followering_data) > 0 else []
         user_item['followering_num'] = followering_num[0] if len(followering_num) > 0 else 0
+
+        # 社区声望, 这个比较难得抓取，数据不在标签内，并且上级标签是保持一致
+        string_data = response.xpath('//div[@class="personal_right"]/div[@class="personalinfo"]').xpath('string(.)').extract()
+        bbs_reputation_data = string_data[0] if len(string_data) > 0 else ''
+        reputation_res = re.findall(r'.社区声望.(\d+)\n.*', bbs_reputation_data)
+        user_item['bbs_reputation'] = reputation_res[0] if len(reputation_res) > 0 else 0
 
         user_info_topic_url = 'https://my.hupu.com/' + user_item['user_id'] + '/topic'
         # user_info_topic_url = 'https://my.hupu.com/' + '210000370364932' + '/topic'

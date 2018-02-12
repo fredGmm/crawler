@@ -125,10 +125,10 @@ class HupuPipeline(object):
             else:
                 conn.commit()
         elif isinstance(item, UserItem):
-            user_info_insert_sql = ("insert into hupu_user (user_id,gender,bbs_reputation,bbs_level,associations,hupu_property,online_time,reg_time,last_login,self_introduction,favorite_sport,favorite_league,favorite_team,visit_num,follower_num,followering_num,topic_num,re_topic_num,collect_num) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)")
+            user_info_insert_sql = ("insert into hupu_user (user_id,gender,bbs_reputation,bbs_level,associations,hupu_property,online_time,reg_time,last_login,self_introduction,favorite_sport,favorite_league,favorite_team,visit_num,follower_num,followering_num,topic_num,re_topic_num,collect_num,create_time) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)")
             user_info_is_exist_sql = ("select 1 from hupu_user where user_id = %s")
             user_info_update_sql = (
-            "update hupu_user set bbs_level=%s,online_time=%s,last_login=%s,visit_num=%s,follower_num=%s,followering_num=%s,topic_num=%s,re_topic_num=%s,collect_num=%s where user_id = %s")
+            "update hupu_user set bbs_level=%s,online_time=%s,last_login=%s,visit_num=%s,follower_num=%s,followering_num=%s,topic_num=%s,re_topic_num=%s,collect_num=%s,create_time=%s where user_id = %s")
 
             user_insert_param = [item['user_id'], item['gender'], item['bbs_reputation'], item['bbs_level'],
                                  item['associations'],
@@ -136,11 +136,11 @@ class HupuPipeline(object):
                                  item['self_introduction'],
                                  item['favorite_sport'], item['favorite_league'], item['favorite_team'],
                                  item['visit_num'], item['follower_num'], item['followering_num'], item['topic_num'],
-                                 item['re_topic_num'], item['collect_num']]
+                                 item['re_topic_num'], item['collect_num'], time.time()]
             user_select_param = [item['user_id']]
             user_update_param = [item['bbs_level'], item['online_time'], item['last_login'], item['visit_num'],
                                  item['follower_num'], item['followering_num'],
-                                 item['topic_num'], item['re_topic_num'], item['collect_num'], item['user_id']]
+                                 item['topic_num'], item['re_topic_num'], item['collect_num'], time.time(), item['user_id']]
             # user_info 处理
             try:
                 select_ret = cur.execute(user_info_is_exist_sql, user_select_param)
