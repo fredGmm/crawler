@@ -10,6 +10,7 @@ import pymysql
 from hupu.items import HupuItem
 from hupu.items import CommentItem
 from hupu.items import UserItem
+from hupu.items import OtherItem
 import time
 import logging
 import pymongo
@@ -154,6 +155,32 @@ class HupuPipeline(object):
                 conn.rollback()
             else:
                 conn.commit()
+
+        elif isinstance(item, OtherItem):
+            print(item['bxj'],item['pgq'],item['shh'])
+            for key, plate_data in item.items():
+                post_num_insert_sql = (
+                "insert into plate_post_num (plate,num,date,create_time) values (%s,%s,%s,%s)")
+                post_num_is_exist_sql = ("select 1 from plate_post_num where plate = %s and date = %s")
+                post_num_update_sql = (
+                    "update plate_post_num set num=%s ,update_time=%s where plate = %s and date = %s")
+
+                post_num_insert_param = [plate_data['plate'], plate_data['num'], plate_data['date'], time.time()]
+                post_num_select_param = [plate_data['plate'],plate_data['date']]
+                post_num_update_param = [plate_data['num'], time.time(), plate_data['plate'], plate_data['date']]
+                # user_info 处理
+                try:
+                    select_ret = cur.execute(post_num_is_exist_sql, post_num_select_param)
+                    if select_ret:
+                        cur.execute(post_num_update_sql, post_num_update_param)
+                    else:
+                        cur.execute(post_num_insert_sql, post_num_insert_param)
+                except ValueError as e:
+                    print('mysql insert fail', e)
+                    logging.log(logging.ERROR, post_num_insert_sql + '--- error :' + str(e))
+                    conn.rollback()
+                else:
+                    conn.commit()
 
         conn.close()
         cur.close()
