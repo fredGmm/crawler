@@ -31,7 +31,7 @@ class HupuStaticViewSpider(scrapy.Spider):
 
     def parse(self, response):
         # inspect_response(response, self)
-        # [各个板块对应的id ] selfie爆照区  999万事屋   ent影视区   cars车友交流  acg ACG区  finance 股票区
+        # [各个板块对应的id ] bxj步行街 pgq破瓜区 it数码  xfl学府路 selfie爆照区  999万事屋   ent影视区   cars车友交流  acg ACG区  finance 股票区
         # music音乐区  literature文学区 love情感区 wallpaper手机壁纸区 hccares 虎扑助学基金会 fit 健康和运动健康
 
         # bxj 步行街
@@ -462,6 +462,42 @@ class HupuStaticViewSpider(scrapy.Spider):
         item['lurenwang'] = {'plate': 'lurenwang', 'num': lurenwang_num, 'date': date_today}
         item['fiba'] = {'plate': 'fiba', 'num': fiba_num, 'date': date_today}
 
+        # esports 电竞数据, 直接调用的接口了-。-
+        esports_data_url = 'https://bbs.hupu.com/get_nav?fup=234'
+        yield scrapy.Request(esports_data_url, meta={'item': item}, callback=self.esports_data_parse, cookies=self.cookie_dict)
         yield item
 
+    def esports_data_parse(self, response):
+        # inspect_response(response, self)
+        item = response.meta['item']
+        logging.log(logging.INFO, json.loads(response.body))
 
+        json_data = json.loads(response.body)
+
+        data = json_data['data'] if json_data['status'] and len(json_data['data']) > 0 else []
+
+        date_today = time.strftime('%Y%m%d', time.localtime())
+        for value in data:
+            if value['fname'] == '王者荣耀':
+                item['wzry'] = {'plate':'wzry', 'num':value['tpostnum'], 'date':date_today}
+            if value['fname'] == '英雄联盟':
+                item['lol'] = {'plate': 'lol', 'num': value['tpostnum'], 'date': date_today}
+            if value['fname'] == '绝地求生':
+                item['pubg'] = {'plate': 'pubg', 'num': value['tpostnum'], 'date': date_today}
+            if value['fname'] == '光荣使命':
+                item['grsm'] = {'plate': 'grsm', 'num': value['tpostnum'], 'date': date_today}
+            if value['fname'] == '终结者2':
+                item['zjz2'] = {'plate': 'zjz2', 'num': value['tpostnum'], 'date': date_today}
+            if value['fname'] == '全军出击':
+                item['pubgm'] = {'plate': 'pubgm', 'num': value['tpostnum'], 'date': date_today}
+            if value['fname'] == '刺激战场':
+                item['cjzc'] = {'plate': 'cjzc', 'num': value['tpostnum'], 'date': date_today}
+            if value['fname'] == 'QGhappy专区':
+                item['qghappy'] = {'plate': 'qghappy', 'num': value['tpostnum'], 'date': date_today}
+            if value['fname'] == '刀塔':
+                item['dota2'] = {'plate': 'dota2', 'num': value['tpostnum'], 'date': date_today}
+            if value['fname'] == '炉石传说':
+                item['hs'] = {'plate': 'hs', 'num': value['tpostnum'], 'date': date_today}
+            if value['fname'] == '守望先锋':
+                item['ow'] = {'plate': 'ow', 'num': value['tpostnum'], 'date': date_today}
+        yield item

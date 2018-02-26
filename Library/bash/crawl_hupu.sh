@@ -11,7 +11,7 @@ ps aux | grep "scrapy" | grep -v grep |  awk -F' ' '{print "sudo kill -9 " $2}' 
 
 #执行项目命令，并指定日志文件; 后台输出
 nohup /usr/local/python/bin/scrapy crawl hupu >> /home/crontab/crontab_log/scrapy_hupu/$date_hour_str.log 2>&1 &
-
+nohup /usr/local/python/bin/scrapy crawl hupu_static_view >> /home/crontab/crontab_log/scrapy_hupu_static_view/$date_hour_str.log 2>&1 &
 
 #定时任务 ，2小时一次
 # 0 */2 * * * sh /home/crontab/hupu_sh.s小时抓取一遍

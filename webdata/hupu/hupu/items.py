@@ -115,6 +115,19 @@ class OtherItem(scrapy.Item):
     lurenwang = scrapy.Field()
     fiba = scrapy.Field()
 
+    # 电竞
+    wzry = scrapy.Field()
+    lol = scrapy.Field()
+    pubg = scrapy.Field()
+    grsm = scrapy.Field()
+    zjz2 = scrapy.Field()
+    pubgm = scrapy.Field()
+    cjzc = scrapy.Field()
+    qghappy = scrapy.Field()
+    dota2 = scrapy.Field()
+    hs = scrapy.Field()
+    ow = scrapy.Field()
+
 
 
 
