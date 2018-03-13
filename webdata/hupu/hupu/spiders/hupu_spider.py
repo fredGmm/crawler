@@ -10,6 +10,7 @@ from scrapy.utils.project import get_project_settings
 import json
 import re
 import logging
+import time
 
 
 class HupuSpider(scrapy.Spider):
@@ -20,18 +21,22 @@ class HupuSpider(scrapy.Spider):
     cookie_dict = dict((line.split('=') for line in cookie_str.strip().split(";")))
 
     urls = []
-    for page in range(1, 8):
+    for page in range(1, 10):
         url = 'https://bbs.hupu.com/bxj'
         if page > 1:
             url = url + '-' + str(page)
         urls.append(url)
-
-    for page in range(1, 8):
+    for page in range(1, 10):
         url = 'https://bbs.hupu.com/lol'
         if page > 1:
             url = url + '-' + str(page)
         urls.append(url)
 
+    for page in range(1, 10):
+        url = 'https://bbs.hupu.com/vote'
+        if page > 1:
+            url = url + '-' + str(page)
+        urls.append(url)
     start_urls = urls
     # start_urls = [
     #     'https://bbs.hupu.com/bxj-99'
@@ -44,7 +49,8 @@ class HupuSpider(scrapy.Spider):
     def parse(self, response):
         # inspect_response(response, self)
         response_url = response.url
-
+        # 记录日志
+        logging.log(logging.INFO, '请求url :' + response_url)
         # 匹配它是属于 bxj（步行街） 还是 vote（湿乎乎） 还是 lol（英雄联盟）
         re_res = re.findall(r'bbs.hupu.com/(\w+){0,4}-?\d*', response_url)
         article_plate = re_res[0] if len(re_res) > 0 else 'bxj'
@@ -85,18 +91,40 @@ class HupuSpider(scrapy.Spider):
         #     article_id = sel.xpath('.//div[@class="titlelink box"]/a[contains(@href, "html")]/@href').re(
         #         r'/(\d+)\.html')
 
+            # 帖子详情
             article_url = 'https://bbs.hupu.com/' + article_id[0] + '.html'
-
+            print(article_url)
             # article_url = 'https://bbs.hupu.com/21393360.html'
             yield scrapy.Request(article_url, meta={'item': item}, callback=self.article_parse,cookies=self.cookie_dict)
 
     # 抓取 帖子下面的亮贴，神回复怎能错过-。-
     def article_parse(self, response):
+        # inspect_response(response, self)
         comment_item = CommentItem() # 高亮回复
         item = response.meta['item']
         # inspect_response(response, self)
         title = response.xpath('//div[@class="bbs-hd-h1"]/h1/text()').extract()
         item['uid'] = item['author_id']
+
+        time_data = response.xpath('//div[@class="floor-show"]/div[@class="floor_box"]/div[@class="author"]/div[@class="left"]/span[@class="stime"]/text()').extract()
+        post_time = time_data[0] if time_data else ''
+
+        # 发帖 的24小时 时间，
+        item['post_hour'] = time.strptime(post_time, '%Y-%m-%d %H:%M').tm_hour if post_time else 0
+
+        post_from_data = response.xpath('//div[@class="floor-show"]/div[@class="floor_box"]/table/tbody/tr/td/div[@class="quote-content"]/small/a/text()').extract()
+
+        post_from_str = post_from_data[0] if len(post_from_data) > 0 else ''
+
+        if re.search(r'iPhone', post_from_str):
+            post_from = 'iPhone'
+        elif re.search(r'Android', post_from_str):
+            post_from = 'Android'
+        else:
+            post_from = 'web'
+
+        item['post_from'] = post_from
+
         content = response.xpath('//div[@class="floor-show"]/div[@class="floor_box"]/table/tbody/tr/td/div[@class="quote-content"]').xpath('string(.)').extract()
         item['article_content'] = content[0] if content else 0
         images = response.xpath('//div[@class="floor-show"]/div[@class="floor_box"]/table/tbody/tr/td/div[@class="quote-content"]').xpath('.//a/@href').extract()

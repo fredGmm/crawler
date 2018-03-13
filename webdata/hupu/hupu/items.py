@@ -1,10 +1,5 @@
 # -*- coding: utf-8 -*-
 
-# Define here the models for your scraped items
-#
-# See documentation in:
-# http://doc.scrapy.org/en/latest/topics/items.html
-
 import scrapy
 
 # hupu 帖子相关信息
@@ -24,6 +19,9 @@ class HupuItem(scrapy.Item):
     article_post_time = scrapy.Field()
     highlights_re = scrapy.Field()
     uid = scrapy.Field()
+
+    post_hour = scrapy.Field()
+    post_from = scrapy.Field()
 
 # 高亮回复 相关信息
 class CommentItem(scrapy.Item):
@@ -127,12 +125,6 @@ class OtherItem(scrapy.Item):
     dota2 = scrapy.Field()
     hs = scrapy.Field()
     ow = scrapy.Field()
-
-
-
-
-
-
 
 
 
