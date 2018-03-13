@@ -32,5 +32,18 @@ import re
 #
 # print(re.findall(r'.社区声望.(\d+)\n.*', s)[0])
 
-s = '今日21207帖'
-print(re.findall(r'.(\d+).*$', s))
+# s = '今日21207帖'
+# print(re.findall(r'.(\d+).*$', s))
+
+s = '发自虎扑iPhone客户端'
+# s = '发自虎扑Android客户端'
+s = ''
+s = '发自手机虎扑 m.hupu.com'
+
+if re.search(r'iPhone', s):
+    print(1)
+elif re.search(r'Android', s):
+    print(2)
+else:
+    print(3)
+# print(re.search(r'iPhone', s))
