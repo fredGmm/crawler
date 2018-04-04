@@ -1,26 +1,26 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
 import pymysql
 
-conn = pymysql.Connect(host='192.168.1.111', port=3306, user='root', passwd='xiaoming', db='web_arashi', charset='utf8')
-conn.autocommit(False)
-cursor = conn.cursor()
 
-sqlInsert = "insert into wxb_title(title) values('title2')"
-sqlUpdate = "update user set username='name41' where userd='4'"
-sqlDelete = "delete from user where userid='1'"
-try:
-    cursor.execute(sqlInsert)
-    print(cursor.rowcount)
-    # cursor.execute(sqlUpdate)
-    # print(cursor.rowcount)
-    # cursor.execute(sqlDelete)
-    # print(cursor.rowcount)
+class MysqlConn:
+    def __init__(self, host, port, user, passwd, db):
+        self.conn = pymysql.Connect(host=host, port=port, user=user, passwd=passwd, db=db, charset='utf8')
+        self.conn.autocommit(False)
+        self.cursor = self.conn.cursor()
 
-    conn.commit()
-except Exception as e:
-    print("Reason:", e)
-    conn.rollback()
+    def find_article(self, sql):
+        try:
+            self.cursor.execute(sql)
+            self.conn.commit()
+            return self.cursor.fetchall()
+        except Exception as e:
+            print("Reason:", e)
+            # self.conn.rollback()
+        self.conn.close()
 
-cursor.close()
+
+# sqlInsert = "insert into wxb_title(title) values('title2')"
+# sqlUpdate = "update user set username='name41' where userd='4'"
+# sqlDelete = "delete from user where userid='1'"
+

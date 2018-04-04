@@ -120,6 +120,8 @@ class HupuSpider(scrapy.Spider):
             post_from = 'iPhone'
         elif re.search(r'Android', post_from_str):
             post_from = 'Android'
+        elif re.search(r'm.hupu.com', post_from_str):
+            post_from = 'wap'  # 手机网页上
         else:
             post_from = 'web'
 

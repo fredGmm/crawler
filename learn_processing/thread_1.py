@@ -56,14 +56,14 @@ import threading
 #
 # print(queue_count)
 
-def loop():
-    x = 0
-    while True:
-        x=x ^ 1
-
-for i in range(1):
-    t = threading.Thread(target=loop)
-    t.start()
+# def loop():
+#     x = 0
+#     while True:
+#         x=x ^ 1
+#
+# for i in range(1):
+#     t = threading.Thread(target=loop)
+#     t.start()
 
 
 
