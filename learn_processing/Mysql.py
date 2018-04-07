@@ -16,8 +16,14 @@ class MysqlConn:
             return self.cursor.fetchall()
         except Exception as e:
             print("Reason:", e)
-            # self.conn.rollback()
+            self.conn.rollback()
         self.conn.close()
+
+    def __del__(self):
+        # if self.cur:
+        #    self.cur.close()
+        if self.conn:
+            self.conn.close()
 
 
 # sqlInsert = "insert into wxb_title(title) values('title2')"
