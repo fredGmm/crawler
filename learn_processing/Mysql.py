@@ -19,11 +19,11 @@ class MysqlConn:
             self.conn.rollback()
         self.conn.close()
 
-    def __del__(self):
-        # if self.cur:
-        #    self.cur.close()
-        if self.conn:
-            self.conn.close()
+    # def __del__(self):
+    #     # if self.cur:
+    #     #    self.cur.close()
+    #     if self.conn:
+    #         self.conn.close()
 
 
 # sqlInsert = "insert into wxb_title(title) values('title2')"
