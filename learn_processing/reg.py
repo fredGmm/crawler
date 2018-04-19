@@ -38,12 +38,14 @@ import re
 s = '发自虎扑iPhone客户端'
 # s = '发自虎扑Android客户端'
 s = ''
-s = '发自手机虎扑 m.hupu.com'
+s = '发自手机虎扑m.hupu.com'
 
 if re.search(r'iPhone', s):
     print(1)
 elif re.search(r'Android', s):
     print(2)
-else:
+elif re.search(r'm\.hupu\.com', s):
     print(3)
+else:
+    print(4)
 # print(re.search(r'iPhone', s))

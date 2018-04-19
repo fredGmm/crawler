@@ -115,12 +115,12 @@ class HupuSpider(scrapy.Spider):
         post_from_data = response.xpath('//div[@class="floor-show"]/div[@class="floor_box"]/table/tbody/tr/td/div[@class="quote-content"]/small/a/text()').extract()
 
         post_from_str = post_from_data[0] if len(post_from_data) > 0 else ''
-
+        logging.info(item['article_id'] + '来源：' + post_from_str)
         if re.search(r'iPhone', post_from_str):
             post_from = 'iPhone'
         elif re.search(r'Android', post_from_str):
             post_from = 'Android'
-        elif re.search(r'm.hupu.com', post_from_str):
+        elif re.search(r'm\.hupu\.com', post_from_str): # https://bbs.hupu.com/21750357.html 发自 m.hupu.com
             post_from = 'wap'  # 手机网页上
         else:
             post_from = 'web'
