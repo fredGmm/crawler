@@ -94,7 +94,7 @@ class HupuSpider(scrapy.Spider):
             # 帖子详情
             article_url = 'https://bbs.hupu.com/' + article_id[0] + '.html'
             print(article_url)
-            # article_url = 'https://bbs.hupu.com/21393360.html'
+            # article_url = 'https://bbs.hupu.com/21663262.html'  # 21663262
             yield scrapy.Request(article_url, meta={'item': item}, callback=self.article_parse,cookies=self.cookie_dict)
 
     # 抓取 帖子下面的亮贴，神回复怎能错过-。-
@@ -112,7 +112,7 @@ class HupuSpider(scrapy.Spider):
         # 发帖 的24小时 时间，
         item['post_hour'] = time.strptime(post_time, '%Y-%m-%d %H:%M').tm_hour if post_time else 0
 
-        post_from_data = response.xpath('//div[@class="floor-show"]/div[@class="floor_box"]/table/tbody/tr/td/div[@class="quote-content"]/small/a/text()').extract()
+        post_from_data = response.xpath('//div[@class="floor-show"]/div[@class="floor_box"]/table/tbody/tr/td/div[@class="quote-content"]/small').xpath('string(.)').extract()
 
         post_from_str = post_from_data[0] if len(post_from_data) > 0 else ''
         logging.info(item['article_id'] + '来源：' + post_from_str)
