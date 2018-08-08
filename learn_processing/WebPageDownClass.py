@@ -46,7 +46,7 @@ class WebPageDown:
     def down_web_page_html(url, headers=None, proxy=None, retry=3, data=None):
         print('下载如下链接：', url)
         # headers = {'User-agent': user_agent}
-        request = urllib.request.Request(url, headers=headers)
+        request = urllib.request.Request(url,data=  urllib.parse.urlencode(data).encode('utf-8'),headers=headers)
         handler = urllib.request.HTTPCookieProcessor()
         opener = urllib.request.build_opener(handler)
 
