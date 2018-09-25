@@ -30,3 +30,11 @@ class MysqlConn:
 # sqlUpdate = "update user set username='name41' where userd='4'"
 # sqlDelete = "delete from user where userid='1'"
 
+if __name__ == "__main__":
+    mysql = MysqlConn(host='192.168.0.180', port=3306, user='root', passwd='xiaoming', db='web_data')
+    r = mysql.find_article('SELECT 1 FROM hupu_article_info WHERE article_id = 1584321406550 ')
+    if r:
+        print(r)
+    else:
+        print(r)
+

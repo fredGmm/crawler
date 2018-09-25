@@ -28,6 +28,7 @@ class CommentItem(scrapy.Item):
     comment_id = scrapy.Field()
     article_id = scrapy.Field()
     comment_username = scrapy.Field()
+    comment_images = scrapy.Field()
     comment_create_time = scrapy.Field()
     comment_uid = scrapy.Field()
     comment_content = scrapy.Field()

@@ -11,6 +11,7 @@ from multiprocessing import Process
 from multiprocessing import Pool
 # sys.path.append('/mnt/hgfs/python/scraping/learn_processing')
 from Mysql import MysqlConn
+from os import path
 
 
 def down_image(number):
@@ -29,8 +30,8 @@ def down_image(number):
     # with open('rows_num.txt', "w") as f:
     #     f.write(rows_num+'\r')
 
-    db_conn = MysqlConn(host='192.168.1.111', port=3306, user='root', passwd='xiaoming', db='web_data')
-    page_size = 500
+    db_conn = MysqlConn(host='192.168.0.66', port=3306, user='root', passwd='xiaoming', db='web_data')
+    page_size = 5
     start = number * page_size
     sql = "select id,article_id,images from hupu_article_info where images != '[]' order by id limit " + str(
         start) + "," + str(page_size)
@@ -51,6 +52,7 @@ def down_image(number):
         for article in list(result):
             # images = article[2].strip('[ ]').split(',')
             image_list = json.loads(article[2])  # 图片列表
+            date = time.strftime('%Y%m%d%H0000', time.localtime())
             for image in image_list:
                 url = image
 
@@ -73,9 +75,28 @@ def down_image(number):
                         print("该链接:", url, 'id:', article[0])
                         continue
 
+                    print(response.code)
                     if response.code == 200:
-                        image_name = str(article[0]) + '_' + str(article[1]) + '_' + str(int(time.time())) + '.jpg'
-                        with open('../static/images/' + image_name, "wb") as code:
+
+                        file_extension = os.path.splitext(url)
+                        ext = file_extension[1] if len(file_extension) > 1 else '.jpg'
+                        image_name = str(article[0]) + '.html' + ext
+                        i = 2
+                        image_path = os.path.dirname(os.path.realpath(__file__)) + '/static/images_' + str(date) + '/'
+                        print(os.path.exists(path.dirname(__file__) + '/../static/images/' + image_name))
+                        print(path.dirname(__file__))
+
+                        if not os.path.exists(image_path):
+                            os.makedirs(image_path)
+
+
+                        while os.path.exists(image_path + image_name):
+                            s = str(i)
+                            image_name = str(article[0]) + '.html' + '(' + s + ')' + ext
+                            i = i + 1
+
+                        with open(image_path + image_name, "wb+") as code:
+                            print(324124)
                             code.write(response.read())
 
     except ValueError as e:
@@ -91,7 +112,7 @@ if __name__ == '__main__':
     print('父进程 %s' % os.getpid())
 
     # down_image(100) # 40张 22s 左右 ， 100张 1m45s
-    p = Pool(4)
+    p = Pool(2)
     for i in range(10):
         # db_conn = MysqlConn(host='45.78.48.4', port=3306, user='root', passwd='ming1234~', db='web_data')
         p.apply_async(down_image, args=(i,))

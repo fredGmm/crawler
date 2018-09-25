@@ -20,7 +20,7 @@ class HupuSpider(scrapy.Spider):
     name = "hupu"
     allowed_domains = ["hupu.com"]
     # 去掉 __gads=ID=d140a94144ba1993:T=1505436772:S=ALNI_MaNd80C0poIVcASdbf8orkORfg6_w;
-    cookie_str = 'PHPSESSID=nepe6b122jjla5hubir1gkcvg3; _dacevid3=06796c97.fd8f.79dc.efad.1bb101c56e65;  __dacevid3=0xcdffaaaa291e1499; cn_2815e201bfe10o53c980_dplus=%7B%22distinct_id%22%3A%20%2215ec1a1eaf74d3-0843db83817eab-3f63450e-13c680-15ec1a1eaf855d%22%2C%22sp%22%3A%20%7B%22%24_sessionid%22%3A%200%2C%22%24_sessionTime%22%3A%201506487169%2C%22%24dp%22%3A%200%2C%22%24_sessionPVTime%22%3A%201506487169%2C%22%24uid%22%3A%20%2206796c97.fd8f.79dc.efad.1bb101c56e65%22%2C%22%24recent_outside_referrer%22%3A%20%22%24direct%22%7D%2C%22initial_view_time%22%3A%20%221506486455%22%2C%22initial_referrer%22%3A%20%22%24direct%22%2C%22initial_referrer_domain%22%3A%20%22%24direct%22%7D; UM_distinctid=15ec1a1eaf74d3-0843db83817eab-3f63450e-13c680-15ec1a1eaf855d; _ga=GA1.2.185559595.1507696753; _HUPUSSOID=46d1e8aa-b464-490d-8ef4-624d5f0eef0f; shihuo-double11-views=11; AUM=dgTjQnLkKnbUF_zui89368LHjN5nt-yqlWtWpTno5j7lw; VUID=40A7E0B39DD44388A60B0F3DFA6511D8; CPLOGIN=39454880%7C1509048000000%7C0%7Cd0ad834836375a411367859ab137561e; CPLOGIN_INFO=%7B%22allname%22%3A%22%E8%99%9A%E6%8B%9F%E4%B9%8B%E5%AE%B6%22%2C%22agentId%22%3A%222334709%22%2C%22subname%22%3A%22%E8%99%9A%E6%8B%9F%E4%B9%8B%E5%AE%B6%22%2C%22memLevelImg%22%3A%220%22%2C%22isMigrated%22%3Afalse%2C%22hascertNo%22%3Afalse%2C%22isLocal%22%3Afalse%7D; vcid=3893f26813e71008d7a80b09c60fa373; NAGENTID=2334709; ipfrom=3aab6b6ec87397eca31f1dcd3bdcf58d%09Unknown; _CLT=918ebe7bb324d8673460f7af1d701a5c; u=18850874|6Jma5ouf5LmL5a62|533e|d032cf388bf469ee5cbbf1cc39f2309a|8bf469ee5cbbf1cc|6Jma5ouf5LmL5a62; us=f54317726dcbe3eb18d64771906131fc84313a2261cfd455180056533ff60a5c284880d95b975e2536655e44378b5a6c115249f1f6b11fbd92c85464634cb9aa; lastvisit=27096%091513905571%09%2Fajax%2Fcard.php%3Fuid%3D165402480851831%26ulink%3Dhttps%253A%252F%252Fmy.hupu.com%252F165402480851831%26fid%3D3441%26_%3D1513905; ua=20185713; __dacevst=8c87e67f.84074b9e|1513932718779; _cnzz_CV30020080=buzi_cookie%7C06796c97.fd8f.79dc.efad.1bb101c56e65%7C-1; Hm_lvt_39fc58a7ab8a311f2f6ca4dc1222a96e=1513921677,1513921679,1513921688,1513921695; Hm_lpvt_39fc58a7ab8a311f2f6ca4dc1222a96e=1513930919; _fmdata=EBF73F1CB6FEAEAD093036AC1F63F7EBF411CB6CF3B57C851F277B26FE3FD6765DAE2CCB7B583F6F0326CC573A3654DBD2C8330733272C55'
+    cookie_str = '_dacevid3=4819cb5a.690d.f68f.3cf3.c7ff9c1431cf;_cnzz_CV30020080=buzi_cookie%7C4819cb5a.690d.f68f.3cf3.c7ff9c1431cf%7C-1; PHPSESSID=8eef5ff57f0a73b6a86b69c51f61a64b; __dacevid3=0x5c0888ed5b55a224; __dacemvst=4607398e.25593d82; _HUPUSSOID=a50545ef-d8bc-4f9e-b22c-3bdea9d6da23; _CLT=918ebe7bb324d8673460f7af1d701a5c; lastvisit=332%091536299241%09%2Ferror%2F%40_%40.php%3F; _fmdata=gc7eUe7%2FFZ0tTaFl8v59g0pokS3aUfK9aMafRGLWgwojvpPdgcgdwHF0db9n%2BdxuPeylAWpMOoQmvxte6i9wlddXRyErTYhV5QICZez80Yk%3D; u=18850874|6Jma5ouf5LmL5a62|533e|d032cf388bf469ee5cbbf1cc39f2309a|8bf469ee5cbbf1cc|6Jma5ouf5LmL5a62; us=f7d105b75c496b72a0ba8c655a5eee216deb64819a3dae95093cb839878c567bd137ce49fb1de6ada7e146a306945c215b0a0febe8316898a5d200709876b476; ua=20490762; Hm_lvt_39fc58a7ab8a311f2f6ca4dc1222a96e=1536390543,1536807215; Hm_lpvt_39fc58a7ab8a311f2f6ca4dc1222a96e=1536807224; __dacevst=64ab0b00.ec98c989|1536809033801'
     cookie_dict = dict((line.split('=') for line in cookie_str.strip().split(";")))
 
     urls = []
@@ -44,6 +44,10 @@ class HupuSpider(scrapy.Spider):
     # start_urls = [
     #     'https://bbs.hupu.com/bxj-99'
     # ]
+
+    def __init__(self, is_down_image= ''):
+        self.is_down_image = is_down_image
+
 
     def start_requests(self):
         for url in self.start_urls:
@@ -97,7 +101,7 @@ class HupuSpider(scrapy.Spider):
             # 帖子详情
             article_url = 'https://bbs.hupu.com/' + article_id[0] + '.html'
             print(article_url)
-            # article_url = 'https://bbs.hupu.com/21663262.html'  # 21663262
+            # article_url = 'https://bbs.hupu.com/19162124.html'  # 21663262
             yield scrapy.Request(article_url, meta={'item': item}, callback=self.article_parse,cookies=self.cookie_dict)
 
     # 抓取 帖子下面的亮贴，神回复怎能错过-。-
@@ -139,12 +143,13 @@ class HupuSpider(scrapy.Spider):
         images3 = response.xpath('//div[@class="floor-show"]/div[@class="floor_box"]/table/tbody/tr/td/div[@class="quote-content"]').xpath('.//img/@data-original').extract()
 
         all_img = images + images2 + images3
-        # 有些事惰加载，有些事默认图片
-        for i, img in enumerate(all_img):
-            if 'placeholder.png' in img :
-                all_img.pop(i)
+        # 有些事惰加载，有些事默认图片;注意是用切片复制，否则会遇到循环删除的坑
+        for img in all_img[:]:
+            if 'placeholder.png' in img:
+                all_img.remove(img)
+        if self.is_down_image:
+            self.down_image(item['article_id'], all_img)
 
-        self.down_image(item['article_id'], all_img)
         item['all_images'] = json.dumps(all_img)
 
         highlights_re = response.xpath('//div[@class="w_reply clearfix"]/div[@id="readfloor"]/div[@class="floor"]/@id').extract() # 高亮回复id
@@ -163,6 +168,20 @@ class HupuSpider(scrapy.Spider):
                     '//div[@id=$val]/div[@class="floor_box"]/div[@class="author"]/div[@class="left"]/span/@uid', val=comment_id).extract_first()
 
                 comment_item['comment_content'] = response.xpath('//div[@id=$val]/div[@class="floor_box"]/table/tbody/tr/td/text()', val=comment_id).extract_first()
+
+                comment_images = response.xpath('//div[@id=$val]/div[@class="floor_box"]/table/tbody',
+                                                val=comment_id).xpath('.//img/@src').extract()
+                comment_images2 = response.xpath('//div[@id=$val]/div[@class="floor_box"]/table/tbody',
+                                                 val=comment_id).xpath('.//img/@data-original').extract()
+
+                comment_all_images = comment_images + comment_images2
+                for comment_img in comment_all_images[:]:
+                    if 'placeholder.png' in comment_img:
+                        all_img.remove(comment_img)
+
+                comment_item['comment_images'] = json.dumps(comment_all_images)
+                if self.is_down_image:
+                    self.down_image(str(item['article_id']), comment_all_images)
 
                 if len(comment_item['comment_content']) < 3:
                     comment_item['comment_content'] = response.xpath('//div[@id=$val]/div[@class="floor_box"]/table/tbody/tr/td', val=comment_id).xpath('string(.)').extract_first()
@@ -185,7 +204,7 @@ class HupuSpider(scrapy.Spider):
         # 记录日志
         logging.log(logging.INFO, '用户id :' + item['author_id'])
         user_item['user_id'] = item['author_id']
-
+        print('进入用户 %s', item['author_id'])
         for sel in response.xpath('//div[@id="content"]/table[@class="profile_table"][1]/tr'):
 
             td_data = sel.xpath('.//td/text()').extract()
@@ -351,22 +370,13 @@ class HupuSpider(scrapy.Spider):
             # 'Cookie': '__gads=ID=2b1d2d4629e10087:T=1502422342:S=ALNI_MapJj4uFT0lKBxgxvDtj9L6AjSJeg; Hm_lvt_609cf0cb82b363063bcf56b050b31c06=1507796834; Hm_lpvt_609cf0cb82b363063bcf56b050b31c06=1507796834; UM_distinctid=15f0fe450055a9-0aacb9fd0a4a64-3e63430c-13c680-15f0fe45009577; CNZZDATA3980738=cnzz_eid%3D375819982-1507795998-null%26ntime%3D1507795998; CNZZDATA5299104=cnzz_eid%3D720537324-1508487488-null%26ntime%3D1508487488; AJSTAT_ok_times=1; CNZZDATA1254929547=202459006-1509005456-null%7C1509071800; Hm_lvt_444ece9ccd5b847838a56c93a0975a8b=1509008713,1509074912; Hm_lpvt_444ece9ccd5b847838a56c93a0975a8b=1509074912; CNZZDATA1259671153=1268634678-1511226188-https%253A%252F%252Fwww.baidu.com%252F%7C1511226188; Hm_lvt_1628f7c8d025473b441a8ba490edd441=1512439552; Hm_lpvt_1628f7c8d025473b441a8ba490edd441=1512439552; Hm_lvt_674430fbddd66a488580ec86aba288f7=1513132898,1513327292,1515145381; Hm_lpvt_674430fbddd66a488580ec86aba288f7=1515145381; CNZZDATA4343144=cnzz_eid%3D1379924068-1515145381-https%253A%252F%252Fwww.baidu.com%252F%26ntime%3D1515145381; CNZZDATA1260528602=830205212-1516873652-https%253A%252F%252Fwww.baidu.com%252F%7C1516873652; CNZZDATA1255738818=1995071737-1511861766-https%253A%252F%252Fwww.baidu.com%252F%7C1517381708; .CNBlogsCookie=7DC0E158877A3B3865D6D99E645D51E1D11BEF8934D86FB7FE0CC59A25794D09D739DFC03869EC2A86D72CBEE007B232227197C0483287817CDA55E064EA1CE3AB07A2494BB202502FF66E79672BBE0043007FBA; .Cnblogs.AspNetCore.Cookies=CfDJ8N7AeFYNSk1Put6Iydpme2YM5BXxs9Iw_G-2Z0oxgAomua6n29m8EgElmo-91D_2ROw8uiG3GRB08Wnf7oRomnCcgSKTaLeVrjmmYBe2oRQvRYF0sqak0m3kshjgcdZ8xpX38QK7GWaTB1G2EBWCX-i2NW_bSLqTcYlt-7hsvIJDA5VNVefTdhoNXdoKdvuXsUZvZaVzao_RacuoCTJe9730Y7Q-9AOMgkmTmMDkMxUqVXMzSDVN4l19fcrDOC7ZyH5wgHgoWE9akxoKpbv8i0QRnlDMVrVmM2axFdSX1Ki9; CNZZDATA1254486480=481500654-1519714184-https%253A%252F%252Fwww.baidu.com%252F%7C1519714184; uaid=ef7b9981e897d4ca720fa7770adadd7e; CNZZDATA5646633=cnzz_eid%3D1257097878-1519975944-https%253A%252F%252Fwww.baidu.com%252F%26ntime%3D1519975944; Hm_lvt_5f2c57e3e6679dd27bb04237bdadde15=1520214030; Hm_lpvt_5f2c57e3e6679dd27bb04237bdadde15=1520214030; _gat=1; _ga=GA1.2.37373735.1501748284; _gid=GA1.2.2052215384.1520212099', # 关键点啊，特么在cookie里埋标识
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
         }
-        # rows_num = '0'
-        #
-        # with open('rows_num.txt', "w") as f:
-        #     f.write(rows_num+'\r')
-
-        # sql = "select id,article_id,images from hupu_article_info where images != '[]' order by id limit  0,100"
 
         try:
             # print('总共%s 条记录' % len(result))
-
-            # with open('rows_num.txt', "w") as f:
-            #     f.write(str(result[len(result) - 1][0]))
-
+            date = time.strftime('%Y%m%d%H0000', time.localtime())
             for image in image_urls:
                 url = image
-                if 'jpg' in url or url.find('jpeg') > -1 or url.find('png') > -1:
+                if 'jpg' in url or url.find('jpeg') > -1 or url.find('png') > -1 or url.find('gif') > -1:
                     # url = url.strip('" "')
                     # url = "https://t12.baidu.com/it/u=2388568829,148893518&fm=173&s=01725C908A5108C81A07A8C3030070AB&w=640&h=1580&img.JPEG"
                     # url = "http://shihuo.hupucdn.com/price/201801/2611/f5ab1a2169d474880d5828c7177c9d50.jpg"
@@ -386,8 +396,22 @@ class HupuSpider(scrapy.Spider):
                         continue
 
                     if response.code == 200:
-                        image_name = str(article_id) + '_' + str(int(time.time())) + '.jpg'
-                        with open( path.dirname(__file__) + '/../static/images/' + image_name, "wb") as code:
+                        file_extension = os.path.splitext(url)
+                        ext = file_extension[1] if len(file_extension) > 1 else '.jpg'
+                        image_name = str(article_id) + '.html' + ext
+
+                        image_path = os.path.dirname(os.path.realpath(__file__)) + '/../static/images_' + str(
+                            date) + '/'
+                        if not os.path.exists(image_path):
+                            os.makedirs(image_path)
+
+                        i=2
+                        while os.path.exists(image_path + image_name):
+                            s = str(i)
+                            image_name = str(article_id) + '.html' + '('+s+')' + ext
+                            i = i + 1
+
+                        with open( image_path + image_name, "wb") as code:
                             code.write(response.read())
 
         except ValueError as e:
