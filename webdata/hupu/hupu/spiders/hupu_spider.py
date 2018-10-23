@@ -20,7 +20,7 @@ class HupuSpider(scrapy.Spider):
     name = "hupu"
     allowed_domains = ["hupu.com"]
     # 去掉 __gads=ID=d140a94144ba1993:T=1505436772:S=ALNI_MaNd80C0poIVcASdbf8orkORfg6_w;
-    cookie_str = '_dacevid3=4819cb5a.690d.f68f.3cf3.c7ff9c1431cf;_cnzz_CV30020080=buzi_cookie%7C4819cb5a.690d.f68f.3cf3.c7ff9c1431cf%7C-1; PHPSESSID=8eef5ff57f0a73b6a86b69c51f61a64b; __dacevid3=0x5c0888ed5b55a224; __dacemvst=4607398e.25593d82; _HUPUSSOID=a50545ef-d8bc-4f9e-b22c-3bdea9d6da23; _CLT=918ebe7bb324d8673460f7af1d701a5c; lastvisit=332%091536299241%09%2Ferror%2F%40_%40.php%3F; _fmdata=gc7eUe7%2FFZ0tTaFl8v59g0pokS3aUfK9aMafRGLWgwojvpPdgcgdwHF0db9n%2BdxuPeylAWpMOoQmvxte6i9wlddXRyErTYhV5QICZez80Yk%3D; u=18850874|6Jma5ouf5LmL5a62|533e|d032cf388bf469ee5cbbf1cc39f2309a|8bf469ee5cbbf1cc|6Jma5ouf5LmL5a62; us=f7d105b75c496b72a0ba8c655a5eee216deb64819a3dae95093cb839878c567bd137ce49fb1de6ada7e146a306945c215b0a0febe8316898a5d200709876b476; ua=20490762; Hm_lvt_39fc58a7ab8a311f2f6ca4dc1222a96e=1536390543,1536807215; Hm_lpvt_39fc58a7ab8a311f2f6ca4dc1222a96e=1536807224; __dacevst=64ab0b00.ec98c989|1536809033801'
+    cookie_str = '_dacevid3=4819cb5a.690d.f68f.3cf3.c7ff9c1431cf; _cnzz_CV30020080=buzi_cookie%7C4819cb5a.690d.f68f.3cf3.c7ff9c1431cf%7C-1; PHPSESSID=8eef5ff57f0a73b6a86b69c51f61a64b; __dacevid3=0x5c0888ed5b55a224; __dacemvst=4607398e.25593d82; _HUPUSSOID=a50545ef-d8bc-4f9e-b22c-3bdea9d6da23; _CLT=918ebe7bb324d8673460f7af1d701a5c; u=18850874|6Jma5ouf5LmL5a62|533e|d032cf388bf469ee5cbbf1cc39f2309a|8bf469ee5cbbf1cc|6Jma5ouf5LmL5a62; us=fafc7b0ad27b41b76f99c03363305d596deb64819a3dae95093cb839878c567bd137ce49fb1de6ada7e146a306945c212fcae557ea2ff0d286038c3fc60cc6f0; amvid=fea970ea61c57f470db5d395bdad0306; lastvisit=1480%091539920159%09%2Ferror%2F%40_%40.php%3F; Hm_lvt_39fc58a7ab8a311f2f6ca4dc1222a96e=1539838303,1539924202,1540173010,1540173262; ua=20536101; Hm_lpvt_39fc58a7ab8a311f2f6ca4dc1222a96e=1540207651; _fmdata=gc7eUe7%2FFZ0tTaFl8v59g0pokS3aUfK9aMafRGLWgwojvpPdgcgdwHF0db9n%2Bdxu7OVd%2Bk2cRot5IGKQnj6t%2BIgFJ7n%2Bhdm6OA1EXewjRF8%3D; __dacevst=fef38f89.ac78093a|1540209457426'
     cookie_dict = dict((line.split('=') for line in cookie_str.strip().split(";")))
 
     urls = []
@@ -177,7 +177,7 @@ class HupuSpider(scrapy.Spider):
                 comment_all_images = comment_images + comment_images2
                 for comment_img in comment_all_images[:]:
                     if 'placeholder.png' in comment_img:
-                        all_img.remove(comment_img)
+                        comment_all_images.remove(comment_img)
 
                 comment_item['comment_images'] = json.dumps(comment_all_images)
                 if self.is_down_image:
@@ -185,7 +185,7 @@ class HupuSpider(scrapy.Spider):
 
                 if len(comment_item['comment_content']) < 3:
                     comment_item['comment_content'] = response.xpath('//div[@id=$val]/div[@class="floor_box"]/table/tbody/tr/td', val=comment_id).xpath('string(.)').extract_first()
-                    logging.log(logging.INFO, '用户评论 :' + comment_item['comment_content'])
+                    # logging.log(logging.INFO, '用户评论 :' + comment_item['comment_content'])
                 comment_item['highlights_num'] = response.xpath('//div[@id=$val]/div[@class="floor_box"]/div[@class="author"]/div[@class="left"]/span/span//span/text()',val=comment_id).extract_first()
                 yield comment_item
         item['highlights_re'] = ','.join(highlights_re)
@@ -202,7 +202,7 @@ class HupuSpider(scrapy.Spider):
         user_item = UserItem()  # 用户信息
         item = response.meta['item']
         # 记录日志
-        logging.log(logging.INFO, '用户id :' + item['author_id'])
+        logging.log(logging.INFO, 'https://my.hupu.com/' + item['author_id'])
         user_item['user_id'] = item['author_id']
         print('进入用户 %s', item['author_id'])
         for sel in response.xpath('//div[@id="content"]/table[@class="profile_table"][1]/tr'):
@@ -302,7 +302,7 @@ class HupuSpider(scrapy.Spider):
         # inspect_response(response, self)
         user_item = response.meta['user_item']
         # 记录日志
-        logging.log(logging.INFO, '用户id 额外信息 :' + user_item['user_id'])
+        # logging.log(logging.INFO, '用户id 额外信息 :' + user_item['user_id'])
         # 访问数
         user_visit_data = response.xpath('//div[@class="personal_right"]/h3[@class="mpersonal"]/span[@class="f666"]/text()').extract()
         user_visit_num = re.findall(r'^.(\d+).*$', user_visit_data[0]) if len(user_visit_data) > 0 else []
@@ -373,7 +373,7 @@ class HupuSpider(scrapy.Spider):
 
         try:
             # print('总共%s 条记录' % len(result))
-            date = time.strftime('%Y%m%d%H0000', time.localtime())
+            date = time.strftime('%Y%m%d', time.localtime())
             for image in image_urls:
                 url = image
                 if 'jpg' in url or url.find('jpeg') > -1 or url.find('png') > -1 or url.find('gif') > -1:

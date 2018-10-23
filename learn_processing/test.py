@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
-
+import os
 sys.path.append('/mnt/hgfs/python/scraping')
 # sys.path.append('D:\code\python\scraping')
 from WebPageDownClass import WebPageDown
@@ -30,8 +30,9 @@ from WebPageDownClass import WebPageDown
 
 
 
-
-
+url = 'https://i10.hoopchina.com.cn/hupuapp/bbs/978/27687978/thread_27687978_20170509150924_s_905670_h_1000px_w_750px180357412.jpeg?x-oss-process=image/resize,w_800/format,webp'
+file_extension = os.path.splitext(url[:url.find('?')])
+print(file_extension[1])
 
 
 
