@@ -24,22 +24,22 @@ class HupuSpider(scrapy.Spider):
     cookie_dict = dict((line.split('=') for line in cookie_str.strip().split(";")))
 
     urls = []
-    for page in range(1, 10):
+    for page in range(1, 2):
         url = 'https://bbs.hupu.com/bxj'
         if page > 1:
             url = url + '-' + str(page)
         urls.append(url)
-    for page in range(1, 10):
-        url = 'https://bbs.hupu.com/lol'
-        if page > 1:
-            url = url + '-' + str(page)
-        urls.append(url)
-
-    for page in range(1, 10):
-        url = 'https://bbs.hupu.com/vote'
-        if page > 1:
-            url = url + '-' + str(page)
-        urls.append(url)
+    # for page in range(1, 10):
+    #     url = 'https://bbs.hupu.com/lol'
+    #     if page > 1:
+    #         url = url + '-' + str(page)
+    #     urls.append(url)
+    #
+    # for page in range(1, 10):
+    #     url = 'https://bbs.hupu.com/vote'
+    #     if page > 1:
+    #         url = url + '-' + str(page)
+    #     urls.append(url)
     start_urls = urls
     # start_urls = [
     #     'https://bbs.hupu.com/bxj-99'
@@ -47,7 +47,6 @@ class HupuSpider(scrapy.Spider):
 
     def __init__(self, is_down_image= ''):
         self.is_down_image = is_down_image
-
 
     def start_requests(self):
         for url in self.start_urls:
@@ -122,7 +121,7 @@ class HupuSpider(scrapy.Spider):
         post_from_data = response.xpath('//div[@class="floor-show"]/div[@class="floor_box"]/table/tbody/tr/td/div[@class="quote-content"]/small').xpath('string(.)').extract()
 
         post_from_str = post_from_data[0] if len(post_from_data) > 0 else ''
-        logging.info(item['article_id'] + '来源：' + post_from_str)
+        # logging.info(item['article_id'] + '来源：' + post_from_str)
         if re.search(r'iPhone', post_from_str):
             post_from = 'iPhone'
         elif re.search(r'Android', post_from_str):
@@ -204,7 +203,7 @@ class HupuSpider(scrapy.Spider):
         # 记录日志
         logging.log(logging.INFO, 'https://my.hupu.com/' + item['author_id'])
         user_item['user_id'] = item['author_id']
-        print('进入用户 %s', item['author_id'])
+        # print('进入用户 https://my.hupu.com/', item['author_id'])
         for sel in response.xpath('//div[@id="content"]/table[@class="profile_table"][1]/tr'):
 
             td_data = sel.xpath('.//td/text()').extract()
@@ -360,7 +359,7 @@ class HupuSpider(scrapy.Spider):
 
     @classmethod
     def down_image(cls, article_id, image_urls):
-        print('我是贴子:%s 的，进程ID是 %s' % (article_id, os.getpid()))
+        # print('我是贴子:%s 的，进程ID是 %s' % (article_id, os.getpid()))
 
         headers = {
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
@@ -417,5 +416,5 @@ class HupuSpider(scrapy.Spider):
         except ValueError as e:
             print('mysql insert fail', e)
 
-        else:
-            print('结束')
+        # else:
+            # print('结束')
