@@ -24,22 +24,28 @@ class HupuSpider(scrapy.Spider):
     cookie_dict = dict((line.split('=') for line in cookie_str.strip().split(";")))
 
     urls = []
-    for page in range(1, 2):
+    for page in range(1, 10):
         url = 'https://bbs.hupu.com/bxj'
         if page > 1:
             url = url + '-' + str(page)
         urls.append(url)
-    # for page in range(1, 10):
-    #     url = 'https://bbs.hupu.com/lol'
-    #     if page > 1:
-    #         url = url + '-' + str(page)
-    #     urls.append(url)
+    for page in range(1, 10):
+        url = 'https://bbs.hupu.com/lol'
+        if page > 1:
+            url = url + '-' + str(page)
+        urls.append(url)
     #
-    # for page in range(1, 10):
-    #     url = 'https://bbs.hupu.com/vote'
-    #     if page > 1:
-    #         url = url + '-' + str(page)
-    #     urls.append(url)
+    for page in range(1, 10):
+        url = 'https://bbs.hupu.com/vote'
+        if page > 1:
+            url = url + '-' + str(page)
+        urls.append(url)
+
+    for page in range(1, 10):
+        url = 'https://bbs.hupu.com/4846'
+        if page > 1:
+            url = url + '-' + str(page)
+        urls.append(url)
     start_urls = urls
     # start_urls = [
     #     'https://bbs.hupu.com/bxj-99'
@@ -203,6 +209,9 @@ class HupuSpider(scrapy.Spider):
         # 记录日志
         logging.log(logging.INFO, 'https://my.hupu.com/' + item['author_id'])
         user_item['user_id'] = item['author_id']
+        name = response.xpath('//div[@id="sidenav"]/ul/li')[0].xpath('a/@title').extract()
+        user_item['user_name'] = name[0] if len(name) > 0 else ''
+        logging.log(logging.INFO, 'user_name:' + user_item['user_name'])
         # print('进入用户 https://my.hupu.com/', item['author_id'])
         for sel in response.xpath('//div[@id="content"]/table[@class="profile_table"][1]/tr'):
 
@@ -383,7 +392,7 @@ class HupuSpider(scrapy.Spider):
 
                     if '?' in url:  # 有些是手机适配图片，如上面的链接
                         url = url[:url.find('?')]
-                    print(url)
+                    # print(url)
                     try:
                         request = urllib.request.Request(url, headers=headers)
                         handler = urllib.request.HTTPCookieProcessor()

@@ -40,7 +40,7 @@ class HupuPipeline(object):
         conn = pymysql.connect(host=host, user=user, passwd=psd, db=db, charset=c)
         cur = conn.cursor()
 
-        if isinstance(item, HupuItem):
+        if isinstance(item, HupuItem) and int(time.strftime('%H',time.localtime())) > 10 and int(time.strftime('%H',time.localtime()))< 19:
             # hupu_article_list sql语句等参数
             insert_sql = (
                 "insert into hupu_article_list (article_id,article_title,artcile_author_uid,article_author_name,post_date,post_hour,comment_num,browse_num,plate,post_from) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) ")
@@ -100,7 +100,6 @@ class HupuPipeline(object):
             if item['all_images']:
 
                 images = json.loads(item['all_images'])
-                print(images, 1332)
 
                 for img in images:
 
@@ -157,13 +156,13 @@ class HupuPipeline(object):
                 conn.rollback()
             else:
                 conn.commit()
-        elif isinstance(item, UserItem) and 0:
-            user_info_insert_sql = ("insert into hupu_user (user_id,gender,bbs_reputation,bbs_level,associations,hupu_property,online_time,reg_time,last_login,self_introduction,favorite_sport,favorite_league,favorite_team,visit_num,follower_num,followering_num,topic_num,re_topic_num,collect_num,create_time) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)")
+        elif isinstance(item, UserItem):
+            user_info_insert_sql = ("insert into hupu_user (user_id,user_name,gender,bbs_reputation,bbs_level,associations,hupu_property,online_time,reg_time,last_login,self_introduction,favorite_sport,favorite_league,favorite_team,visit_num,follower_num,followering_num,topic_num,re_topic_num,collect_num,create_time) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)")
             user_info_is_exist_sql = ("select 1 from hupu_user where user_id = %s")
             user_info_update_sql = (
-            "update hupu_user set bbs_level=%s,online_time=%s,last_login=%s,visit_num=%s,follower_num=%s,followering_num=%s,topic_num=%s,re_topic_num=%s,collect_num=%s,create_time=%s where user_id = %s")
+            "update hupu_user set user_name=%s, bbs_level=%s,online_time=%s,last_login=%s,visit_num=%s,follower_num=%s,followering_num=%s,topic_num=%s,re_topic_num=%s,collect_num=%s,create_time=%s where user_id = %s")
 
-            user_insert_param = [item['user_id'], item['gender'], item['bbs_reputation'], item['bbs_level'],
+            user_insert_param = [item['user_id'],item['user_name'], item['gender'], item['bbs_reputation'], item['bbs_level'],
                                  item['associations'],
                                  item['hupu_property'], item['online_time'], item['reg_time'], item['last_login'],
                                  item['self_introduction'],
@@ -171,7 +170,7 @@ class HupuPipeline(object):
                                  item['visit_num'], item['follower_num'], item['followering_num'], item['topic_num'],
                                  item['re_topic_num'], item['collect_num'], time.time()]
             user_select_param = [item['user_id']]
-            user_update_param = [item['bbs_level'], item['online_time'], item['last_login'], item['visit_num'],
+            user_update_param = [item['user_name'], item['bbs_level'], item['online_time'], item['last_login'], item['visit_num'],
                                  item['follower_num'], item['followering_num'],
                                  item['topic_num'], item['re_topic_num'], item['collect_num'], time.time(), item['user_id']]
             # user_info 处理

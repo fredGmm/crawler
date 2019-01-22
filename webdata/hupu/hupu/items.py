@@ -38,6 +38,7 @@ class CommentItem(scrapy.Item):
 # 用户相关信息
 class UserItem(scrapy.Item):
     user_id = scrapy.Field()
+    user_name = scrapy.Field()
     gender = scrapy.Field()
     bbs_reputation = scrapy.Field()
     bbs_level = scrapy.Field()
